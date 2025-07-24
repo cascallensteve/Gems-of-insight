@@ -1,0 +1,533 @@
+.user-profile {
+  padding: 100px 0 80px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Profile Header */
+.profile-header {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b8e23, #8FBC8F);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.profile-info > p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 30px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #6b8e23;
+  margin-bottom: 3px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.edit-btn,
+.logout-btn,
+.save-btn,
+.cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.edit-btn {
+  background: #6b8e23;
+  color: white;
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.save-btn {
+  background: #22c55e;
+  color: white;
+}
+
+.cancel-btn {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(107, 142, 35, 0.3);
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+/* Profile Tabs */
+.profile-tabs {
+  display: flex;
+  background: white;
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  gap: 5px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.tab-btn.active {
+  background: #6b8e23;
+  color: white;
+}
+
+.tab-btn:hover:not(.active) {
+  background: rgba(107, 142, 35, 0.1);
+  color: #6b8e23;
+}
+
+/* Tab Content */
+.tab-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 30px 0;
+}
+
+/* Profile Details */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #6b8e23;
+}
+
+.form-value {
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* Orders & Appointments Summary */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.view-all-btn {
+  background: #6b8e23;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(107, 142, 35, 0.3);
+}
+
+.orders-list,
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-summary,
+.appointment-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #6b8e23;
+}
+
+.order-info h4,
+.appointment-info h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.order-info p,
+.appointment-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.delivered {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.status-badge.shipped {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.order-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.appointment-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.reschedule-btn,
+.cancel-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reschedule-btn {
+  background: #f59e0b;
+  color: white;
+}
+
+.appointment-actions .cancel-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.reschedule-btn:hover,
+.appointment-actions .cancel-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+/* Settings */
+.settings-section {
+  margin-bottom: 40px;
+}
+
+.settings-section h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.setting-item {
+  margin-bottom: 15px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.checkbox-label input:checked + .checkmark {
+  background: #6b8e23;
+  border-color: #6b8e23;
+}
+
+.checkbox-label input:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.danger-zone {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.danger-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.danger-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.danger-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-profile {
+    padding: 80px 0 60px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    padding: 30px 25px;
+  }
+
+  .profile-stats {
+    justify-content: center;
+  }
+
+  .profile-actions {
+    align-items: center;
+  }
+
+  .profile-tabs {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tab-content {
+    padding: 30px 25px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full-width {
+    grid-column: span 1;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .order-summary,
+  .appointment-summary {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .appointment-actions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 0 15px;
+  }
+
+  .profile-header,
+  .tab-content {
+    padding: 25px 20px;
+  }
+
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .profile-info h1 {
+    font-size: 1.6rem;
+  }
+
+  .profile-stats {
+    gap: 20px;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .tab-btn {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+}
