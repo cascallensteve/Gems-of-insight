@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './OrdersPage.css';
 
-const OrdersPage = ({ user, onNavigateBack }) => {
+const OrdersPage = ({ currentUser }) => {
   const [orders, setOrders] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
@@ -9,9 +9,15 @@ const OrdersPage = ({ user, onNavigateBack }) => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
 
-  // Mock orders data
+  // Load orders from localStorage
   useEffect(() => {
-    const mockOrders = [
+    const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    
+    if (savedOrders.length > 0) {
+      setOrders(savedOrders);
+    } else {
+      // If no orders exist, show empty state or mock data for demo
+      const mockOrders = [
       {
         id: 'ORD-2024-001',
         date: '2024-01-15',
@@ -98,7 +104,8 @@ const OrdersPage = ({ user, onNavigateBack }) => {
         cancelReason: 'Changed mind'
       }
     ];
-    setOrders(mockOrders);
+      setOrders(mockOrders);
+    }
   }, []);
 
   const getStatusColor = (status) => {
@@ -170,7 +177,7 @@ const OrdersPage = ({ user, onNavigateBack }) => {
         {/* Header */}
         <div className="orders-header">
           <div className="header-left">
-            <button className="back-btn" onClick={onNavigateBack}>
+            <button className="back-btn" onClick={() => window.history.back()}>
               ← Back to Shop
             </button>
             <h1>My Orders</h1>
@@ -221,7 +228,7 @@ const OrdersPage = ({ user, onNavigateBack }) => {
                 <div className="no-orders-icon">📦</div>
                 <h3>No orders found</h3>
                 <p>You haven't placed any orders yet or no orders match your filter criteria.</p>
-                <button className="shop-now-btn" onClick={onNavigateBack}>
+                <button className="shop-now-btn" onClick={() => window.history.back()}>
                   Start Shopping
                 </button>
               </div>

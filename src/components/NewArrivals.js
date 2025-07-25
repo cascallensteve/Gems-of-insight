@@ -4,14 +4,15 @@ import './NewArrivals.css';
 const NewArrivals = ({ onNavigateToShop }) => {
   const [cartNotification, setCartNotification] = useState({ show: false, productName: '' });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [favorites, setFavorites] = useState([]);
 
   const products = [
     {
       id: 1,
       name: "Premium Organic Green Tea Collection",
-      price: "$24.99",
-      originalPrice: "$34.99",
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
+      price: "KSh 2,499",
+      originalPrice: "KSh 3,499",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
       description: "Hand-picked organic green tea leaves from high-altitude gardens. Rich in antioxidants, promotes metabolism, and supports heart health naturally.",
       badge: "🌿 Organic",
       rating: 4.8,
@@ -20,8 +21,8 @@ const NewArrivals = ({ onNavigateToShop }) => {
     {
       id: 2,
       name: "Himalayan Herbal Wellness Mix",
-      price: "$18.50",
-      originalPrice: "$25.00",
+      price: "KSh 1,850",
+      originalPrice: "KSh 2,500",
       image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
       description: "Ancient Himalayan blend of 12 powerful herbs. Boosts immunity, reduces stress, and enhances overall vitality for modern living.",
       badge: "⭐ Best Seller",
@@ -31,8 +32,8 @@ const NewArrivals = ({ onNavigateToShop }) => {
     {
       id: 3,
       name: "Raw Manuka Honey - Pure Gold",
-      price: "$32.00",
-      originalPrice: "$42.00",
+      price: "KSh 3,200",
+      originalPrice: "KSh 4,200",
       image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
       description: "Genuine Manuka honey with MGO 400+. Natural antibacterial properties, supports digestive health, and boosts immune system effectively.",
       badge: "🍯 Premium",
@@ -42,12 +43,56 @@ const NewArrivals = ({ onNavigateToShop }) => {
     {
       id: 4,
       name: "Complete Wellness Starter Kit",
-      price: "$45.99",
-      originalPrice: "$65.00",
+      price: "KSh 4,599",
+      originalPrice: "KSh 6,500",
       image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
       description: "Everything you need to start your natural wellness journey. Includes superfoods, probiotics, and essential vitamins for optimal health.",
       badge: "🎁 Bundle Deal",
       rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 5,
+      name: "Organic Turmeric Root Powder",
+      price: "KSh 1,299",
+      originalPrice: "KSh 1,799",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
+      description: "Pure turmeric powder with high curcumin content. Natural anti-inflammatory properties, supports joint health and immune system.",
+      badge: "🌿 Organic",
+      rating: 4.5,
+      inStock: true
+    },
+    {
+      id: 6,
+      name: "Moringa Leaf Capsules - 60ct",
+      price: "KSh 2,150",
+      originalPrice: null,
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      description: "Nutrient-dense moringa capsules packed with vitamins, minerals, and antioxidants. Boosts energy and supports overall wellness.",
+      badge: "💊 New",
+      rating: 4.8,
+      inStock: true
+    },
+    {
+      id: 7,
+      name: "Cold-Pressed Coconut Oil",
+      price: "KSh 899",
+      originalPrice: "KSh 1,299",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
+      description: "Virgin coconut oil extracted using cold-press method. Perfect for cooking, skincare, and hair care routines.",
+      badge: "🥥 Pure",
+      rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 8,
+      name: "Herbal Detox Tea Blend",
+      price: "KSh 1,650",
+      originalPrice: "KSh 2,100",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      description: "Natural detox tea blend with dandelion, milk thistle, and green tea. Supports liver health and natural cleansing.",
+      badge: "🌿 Detox",
+      rating: 4.4,
       inStock: true
     }
   ];
@@ -57,6 +102,17 @@ const NewArrivals = ({ onNavigateToShop }) => {
     setTimeout(() => {
       setCartNotification({ show: false, productName: '' });
     }, 3000);
+  };
+
+  const handleToggleFavorite = (product) => {
+    setFavorites(prev => {
+      const isFavorite = prev.includes(product.id);
+      if (isFavorite) {
+        return prev.filter(id => id !== product.id);
+      } else {
+        return [...prev, product.id];
+      }
+    });
   };
 
   const handleViewProduct = (product) => {
@@ -77,18 +133,16 @@ const NewArrivals = ({ onNavigateToShop }) => {
       <div className="products-grid">
         {products.map((product) => (
           <div key={product.id} className="product-card">
+            {/* Product Image */}
             <div className="product-image">
               <img src={product.image} alt={product.name} />
               
-              {/* Product Badge */}
-              <div className="product-badge">{product.badge}</div>
-              
-              {/* Stock Status */}
-              {product.inStock && (
-                <div className="stock-indicator">✅ In Stock</div>
+              {/* Product Badge - Only if sale */}
+              {product.originalPrice && (
+                <div className="sale-badge">Sale!</div>
               )}
               
-              {/* Product Actions - Always visible */}
+              {/* Product Actions - Show on hover */}
               <div className="product-actions">
                 <button 
                   className="action-btn add-to-cart" 
@@ -99,45 +153,26 @@ const NewArrivals = ({ onNavigateToShop }) => {
                 </button>
                 <button 
                   className="action-btn favorite" 
+                  onClick={() => handleToggleFavorite(product)}
                   title="Add to Favorites"
                 >
                   ❤️
                 </button>
-                <button 
-                  className="action-btn view-product" 
-                  onClick={() => handleViewProduct(product)}
-                  title="View Product"
-                >
-                  👁️
-                </button>
               </div>
+            </div>
 
-              {/* Product Info - Always visible */}
-              <div className="product-overlay">
-                <div className="product-rating">
-                  <div className="stars">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className={i < Math.floor(product.rating) ? 'star filled' : 'star'}>
-                        ⭐
-                      </span>
-                    ))}
-                  </div>
-                  <span className="rating-number">({product.rating})</span>
-                </div>
-                <h3 className="product-name">{product.name}</h3>
-                <p className="product-description">{product.description}</p>
-                <div className="product-pricing">
-                  {product.originalPrice && (
-                    <span className="original-price">{product.originalPrice}</span>
-                  )}
-                  <span className="current-price">{product.price}</span>
-                  {product.originalPrice && (
-                    <span className="discount">
-                      Save {Math.round(((parseFloat(product.originalPrice.replace('$', '')) - parseFloat(product.price.replace('$', ''))) / parseFloat(product.originalPrice.replace('$', ''))) * 100)}%
-                    </span>
-                  )}
-                </div>
+            {/* Product Info Below Image */}
+            <div className="product-info">
+              <h3 className="product-title">{product.name}</h3>
+              
+              <div className="product-pricing">
+                {product.originalPrice && (
+                  <span className="original-price">{product.originalPrice}</span>
+                )}
+                <span className="current-price">{product.price}</span>
               </div>
+              
+              <div className="product-category">Health & Wellness</div>
             </div>
           </div>
         ))}

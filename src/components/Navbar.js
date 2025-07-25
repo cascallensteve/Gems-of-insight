@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import './Navbar.css';
 
-const Navbar = ({ currentPage, setCurrentPage, openAppointmentModal, openCart }) => {
+const Navbar = ({ currentPage, setCurrentPage, openAppointmentModal, openCart, currentUser, onLogout }) => {
   const { getCartCount, getCartTotal } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const cartCount = getCartCount();
   const cartTotal = getCartTotal();
 
@@ -15,7 +16,25 @@ const Navbar = ({ currentPage, setCurrentPage, openAppointmentModal, openCart })
   const handleNavClick = (page) => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false); // Close mobile menu after navigation
+    setShowUserMenu(false); // Close user menu after navigation
   };
+
+  // Close user menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = () => {
+      if (showUserMenu) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   return (
     <>
@@ -116,12 +135,34 @@ const Navbar = ({ currentPage, setCurrentPage, openAppointmentModal, openCart })
 
           {/* Right Section - Desktop Only */}
           <div className="navbar-right desktop-only">
-            <div className="login-section" onClick={() => setCurrentPage('login')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="login-text">Login</span>
-            </div>
+            {currentUser ? (
+              <div className="user-section" onClick={(e) => {
+                e.stopPropagation();
+                setShowUserMenu(!showUserMenu);
+              }}>
+                <div className="user-avatar">
+                  <span>{currentUser.firstName?.charAt(0) || currentUser.name?.charAt(0) || 'U'}</span>
+                </div>
+                <span className="user-name">Hi, {currentUser.firstName || currentUser.name || 'User'}</span>
+                {showUserMenu && (
+                  <div className="user-dropdown" onClick={(e) => e.stopPropagation()}>
+                    <button onClick={() => handleNavClick('profile')}>Profile</button>
+                    <button onClick={() => handleNavClick('orders')}>My Orders</button>
+                    <button onClick={() => {
+                      onLogout();
+                      setShowUserMenu(false);
+                    }}>Logout</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="login-section" onClick={() => setCurrentPage('login')}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="login-text">Login</span>
+              </div>
+            )}
             
             <div className="search-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

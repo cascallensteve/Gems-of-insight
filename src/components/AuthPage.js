@@ -21,7 +21,7 @@ const AuthPage = ({ onLogin, onClose }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    // Clear error when user starts typing
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -31,9 +31,7 @@ const AuthPage = ({ onLogin, onClose }) => {
     const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Email or username is required';
     }
 
     if (!formData.password) {
@@ -50,34 +48,35 @@ const AuthPage = ({ onLogin, onClose }) => {
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
-
+      
       if (!formData.terms) {
-        newErrors.terms = 'You must accept the terms and conditions';
+        newErrors.terms = 'You must accept the terms';
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm();
     
-    if (!validateForm()) return;
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     setLoading(true);
-    
+    setErrors({});
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock user data
       const userData = {
-        id: Date.now(),
-        firstName: formData.firstName || 'John',
-        lastName: formData.lastName || 'Doe',
+        name: isLogin ? 'User' : `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
-        phone: formData.phone || '+1234567890',
+        phone: formData.phone || '+254700000000',
         isAdmin: formData.email.includes('admin')
       };
 
@@ -92,6 +91,24 @@ const AuthPage = ({ onLogin, onClose }) => {
       setErrors({ submit: 'Something went wrong. Please try again.' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleAuth = () => {
+    // Simulate Google authentication
+    const userData = {
+      name: 'Google User',
+      email: 'user@gmail.com',
+      phone: '+254700000000',
+      isAdmin: false
+    };
+    
+    if (onLogin) {
+      onLogin(userData);
+    }
+    
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -114,158 +131,176 @@ const AuthPage = ({ onLogin, onClose }) => {
       <div className="auth-container" onClick={(e) => e.stopPropagation()}>
         <button className="close-auth" onClick={onClose}>×</button>
         
-        <div className="auth-header">
-          <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-          <p>{isLogin ? 'Sign in to your account' : 'Join our natural wellness community'}</p>
+        {/* Logo Section */}
+        <div className="auth-logo">
+          <img 
+            src="https://res.cloudinary.com/djksfayfu/image/upload/v1753345398/Gems_Logo_h9auzj.png" 
+            alt="Gems of Insight" 
+            className="logo-image"
+          />
         </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
+        {/* Login/Signup Form Section */}
+        <div className="auth-content">
           {!isLogin && (
-            <div className="form-row">
-              <div className="form-group">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className={errors.firstName ? 'error' : ''}
-                  placeholder="Enter your first name"
-                />
-                {errors.firstName && <span className="error-text">{errors.firstName}</span>}
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className={errors.lastName ? 'error' : ''}
-                  placeholder="Enter your last name"
-                />
-                {errors.lastName && <span className="error-text">{errors.lastName}</span>}
+            <div className="auth-image-section">
+              <img 
+                src="https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg" 
+                alt="Healthy Living" 
+                className="healthy-image"
+              />
+              <div className="image-overlay">
+                <h3>Start Your Wellness Journey</h3>
+                <p>Join thousands who trust us for their natural health needs</p>
               </div>
             </div>
           )}
 
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={errors.email ? 'error' : ''}
-              placeholder="Enter your email"
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
-
-          {!isLogin && (
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className={errors.phone ? 'error' : ''}
-                placeholder="Enter your phone number"
-              />
-              {errors.phone && <span className="error-text">{errors.phone}</span>}
+          <div className="auth-form-section">
+            <div className="auth-header">
+              <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+              <p>{isLogin ? 'Sign in to continue your wellness journey' : 'Join our natural wellness community'}</p>
             </div>
-          )}
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className={errors.password ? 'error' : ''}
-              placeholder="Enter your password"
-            />
-            {errors.password && <span className="error-text">{errors.password}</span>}
-          </div>
-
-          {!isLogin && (
-            <div className="form-group">
-              <label>Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className={errors.confirmPassword ? 'error' : ''}
-                placeholder="Confirm your password"
-              />
-              {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
-            </div>
-          )}
-
-          {!isLogin && (
-            <div className="form-group checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="terms"
-                  checked={formData.terms}
-                  onChange={handleInputChange}
-                  className={errors.terms ? 'error' : ''}
-                />
-                <span className="checkmark"></span>
-                I agree to the <a href="#terms">Terms & Conditions</a> and <a href="#privacy">Privacy Policy</a>
-              </label>
-              {errors.terms && <span className="error-text">{errors.terms}</span>}
-            </div>
-          )}
-
-          {errors.submit && <div className="error-text submit-error">{errors.submit}</div>}
-
-          <button 
-            type="submit" 
-            className="auth-submit-btn"
-            disabled={loading}
-          >
-            {loading ? (
-              <span className="loading-spinner">⟳</span>
-            ) : (
-              isLogin ? 'Sign In' : 'Create Account'
-            )}
-          </button>
-        </form>
-
-        <div className="auth-divider">
-          <span>or</span>
-        </div>
-
-        <div className="social-auth">
-          <button className="social-btn google">
-            <span>🔍</span>
-            Continue with Google
-          </button>
-          <button className="social-btn facebook">
-            <span>📘</span>
-            Continue with Facebook
-          </button>
-        </div>
-
-        <div className="auth-switch">
-          <p>
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
-            <button type="button" onClick={toggleAuthMode}>
-              {isLogin ? 'Sign Up' : 'Sign In'}
+            {/* Google Authentication */}
+            <button 
+              type="button" 
+              className="google-auth-btn"
+              onClick={handleGoogleAuth}
+            >
+              <svg className="google-icon" viewBox="0 0 24 24" width="32" height="32">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
             </button>
-          </p>
-        </div>
 
-        {isLogin && (
-          <div className="forgot-password">
-            <a href="#forgot">Forgot your password?</a>
+            <div className="divider">
+              <span>or</span>
+            </div>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              {!isLogin && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className={errors.firstName ? 'error' : ''}
+                      placeholder="First Name"
+                      required
+                    />
+                    {errors.firstName && <span className="error-text">{errors.firstName}</span>}
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className={errors.lastName ? 'error' : ''}
+                      placeholder="Last Name"
+                      required
+                    />
+                    {errors.lastName && <span className="error-text">{errors.lastName}</span>}
+                  </div>
+                </div>
+              )}
+
+              {!isLogin && (
+                <div className="form-group">
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={errors.phone ? 'error' : ''}
+                    placeholder="Phone Number (+254...)"
+                    required
+                  />
+                  {errors.phone && <span className="error-text">{errors.phone}</span>}
+                </div>
+              )}
+
+              <div className="form-group">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={errors.email ? 'error' : ''}
+                  placeholder="Email or Username"
+                  required
+                />
+                {errors.email && <span className="error-text">{errors.email}</span>}
+              </div>
+
+              <div className="form-group">
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={errors.password ? 'error' : ''}
+                  placeholder="Password"
+                  required
+                />
+                {errors.password && <span className="error-text">{errors.password}</span>}
+              </div>
+
+              {!isLogin && (
+                <div className="form-group">
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className={errors.confirmPassword ? 'error' : ''}
+                    placeholder="Confirm Password"
+                    required
+                  />
+                  {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+                </div>
+              )}
+
+              {!isLogin && (
+                <div className="form-group checkbox-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="terms"
+                      checked={formData.terms}
+                      onChange={handleInputChange}
+                      className={errors.terms ? 'error' : ''}
+                    />
+                    <span className="checkmark"></span>
+                    I agree to the Terms & Conditions
+                  </label>
+                  {errors.terms && <span className="error-text">{errors.terms}</span>}
+                </div>
+              )}
+
+              {errors.submit && <div className="error-text submit-error">{errors.submit}</div>}
+
+              <button type="submit" className="auth-submit-btn" disabled={loading}>
+                {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+              </button>
+            </form>
+
+            <div className="auth-footer">
+              <p>
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                <button type="button" className="toggle-auth" onClick={toggleAuthMode}>
+                  {isLogin ? 'Sign Up' : 'Sign In'}
+                </button>
+              </p>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

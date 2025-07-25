@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import './UserProfile.css';
 
-const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppointments, onLogout }) => {
+const UserProfile = ({ currentUser, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user.firstName || '',
-    lastName: user.lastName || '',
-    email: user.email || '',
-    phone: user.phone || '',
-    dateOfBirth: user.dateOfBirth || '',
-    gender: user.gender || '',
-    address: user.address || '',
-    city: user.city || '',
-    newsletter: user.newsletter || false
+    firstName: currentUser?.firstName || '',
+    lastName: currentUser?.lastName || '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || '',
+    dateOfBirth: currentUser?.dateOfBirth || '',
+    gender: currentUser?.gender || '',
+    address: currentUser?.address || '',
+    city: currentUser?.city || '',
+    newsletter: currentUser?.newsletter || false
   });
   const [activeTab, setActiveTab] = useState('profile');
 
@@ -25,21 +25,23 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
   };
 
   const handleSave = () => {
-    onUpdateUser({ ...user, ...formData });
+    const updatedUser = { ...currentUser, ...formData };
+    onUpdate(updatedUser);
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setFormData({
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      email: user.email || '',
-      phone: user.phone || '',
-      dateOfBirth: user.dateOfBirth || '',
-      gender: user.gender || '',
-      address: user.address || '',
-      city: user.city || '',
-      newsletter: user.newsletter || false
+      firstName: currentUser?.firstName || '',
+      lastName: currentUser?.lastName || '',
+      email: currentUser?.email || '',
+      phone: currentUser?.phone || '',
+      dateOfBirth: currentUser?.dateOfBirth || '',
+      gender: currentUser?.gender || '',
+      address: currentUser?.address || '',
+      city: currentUser?.city || '',
+      newsletter: currentUser?.newsletter || false
     });
     setIsEditing(false);
   };
@@ -58,16 +60,24 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
   return (
     <div className="user-profile">
       <div className="profile-container">
+        {/* Welcome Message */}
+        <div className="welcome-message">
+          <div className="welcome-content">
+            <h2>Welcome to your Profile, {currentUser?.firstName || currentUser?.name || 'User'}! 🎉</h2>
+            <p>Manage your account information, view orders, and update your preferences here.</p>
+          </div>
+        </div>
+        
         {/* Profile Header */}
         <div className="profile-header">
           <div className="profile-avatar">
             <div className="avatar-circle">
-              {user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U'}
+              {currentUser?.firstName ? currentUser.firstName.charAt(0).toUpperCase() : 'U'}
             </div>
           </div>
           <div className="profile-info">
-            <h1>{user.firstName} {user.lastName}</h1>
-            <p>{user.email}</p>
+            <h1>{currentUser?.firstName || currentUser?.name || 'User'} {currentUser?.lastName || ''}</h1>
+            <p>{currentUser?.email}</p>
             <div className="profile-stats">
               <div className="stat">
                 <span className="stat-number">{recentOrders.length}</span>
@@ -78,7 +88,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                 <span className="stat-label">Appointments</span>
               </div>
               <div className="stat">
-                <span className="stat-number">{user.isAdmin ? 'Admin' : 'Member'}</span>
+                <span className="stat-number">{currentUser?.isAdmin ? 'Admin' : 'Member'}</span>
                 <span className="stat-label">Status</span>
               </div>
             </div>
@@ -98,9 +108,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                 </button>
               </div>
             )}
-            <button className="logout-btn" onClick={onLogout}>
-              🚪 Logout
-            </button>
+
           </div>
         </div>
 
@@ -148,7 +156,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.firstName || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.firstName || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -161,7 +169,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.lastName || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.lastName || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -174,7 +182,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.email}</div>
+                    <div className="form-value">{currentUser?.email}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -187,7 +195,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.phone || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.phone || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -200,7 +208,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.dateOfBirth || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.dateOfBirth || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -218,7 +226,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       <option value="prefer-not-to-say">Prefer not to say</option>
                     </select>
                   ) : (
-                    <div className="form-value">{user.gender || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.gender || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group full-width">
@@ -231,7 +239,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.address || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.address || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -244,7 +252,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{user.city || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.city || 'Not provided'}</div>
                   )}
                 </div>
               </div>
@@ -255,7 +263,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
             <div className="orders-summary">
               <div className="section-header">
                 <h2>Recent Orders</h2>
-                <button className="view-all-btn" onClick={onNavigateToOrders}>
+                <button className="view-all-btn">
                   View All Orders
                 </button>
               </div>
@@ -284,7 +292,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
             <div className="appointments-summary">
               <div className="section-header">
                 <h2>Upcoming Appointments</h2>
-                <button className="view-all-btn" onClick={onNavigateToAppointments}>
+                <button className="view-all-btn">
                   View All Appointments
                 </button>
               </div>
@@ -316,7 +324,7 @@ const UserProfile = ({ user, onUpdateUser, onNavigateToOrders, onNavigateToAppoi
                     <input
                       type="checkbox"
                       name="newsletter"
-                      checked={isEditing ? formData.newsletter : user.newsletter}
+                      checked={isEditing ? formData.newsletter : currentUser?.newsletter}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />

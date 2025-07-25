@@ -4,8 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FeaturedServices from './components/FeaturedServices';
 import NewArrivals from './components/NewArrivals';
-import HealthSpecialist from './components/HealthSpecialist';
-import StatsCounter from './components/StatsCounter';
+
 import BlogPage from './components/BlogPage';
 import LoginPage from './components/LoginPage';
 import UserProfile from './components/UserProfile';
@@ -13,7 +12,7 @@ import OrdersPage from './components/OrdersPage';
 import ProductSection from './components/ProductSection';
 import ConsultationPage from './components/ConsultationPage';
 import Shop from './components/Shop';
-import AppointmentBooking from './components/AppointmentBooking';
+
 import Cart from './components/Cart';
 import ProductView from './components/ProductView';
 import QuickView from './components/QuickView';
@@ -28,6 +27,15 @@ function App() {
   const [isProductViewOpen, setIsProductViewOpen] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Check for logged in user on app load
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+  }, []);
 
   const handleSearch = ({ searchTerm, category }) => {
     // In a real app, this would make an API call
@@ -264,6 +272,17 @@ function App() {
     setIsCartOpen(true);
   };
 
+  const handleLogin = (userData) => {
+    setCurrentUser(userData);
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    setCurrentPage('home');
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'shop':
@@ -279,7 +298,11 @@ function App() {
       case 'consultation':
         return <ConsultationPage />;
       case 'login':
-        return <LoginPage />;
+        return <LoginPage onLogin={handleLogin} onClose={() => setCurrentPage('home')} />;
+      case 'profile':
+        return <UserProfile currentUser={currentUser} onUpdate={handleLogin} />;
+      case 'orders':
+        return <OrdersPage currentUser={currentUser} />;
       case 'home':
       default:
         return (
@@ -287,8 +310,6 @@ function App() {
             <Hero />
             <FeaturedServices />
             <NewArrivals onNavigateToShop={() => setCurrentPage('shop')} />
-            <HealthSpecialist onNavigateToConsultation={() => setCurrentPage('consultation')} />
-            <StatsCounter />
             
             {searchResults && (
               <ProductSection 
@@ -311,14 +332,13 @@ function App() {
           setCurrentPage={setCurrentPage}
           openAppointmentModal={() => setIsAppointmentModalOpen(true)}
           openCart={handleOpenCart}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
         
         {renderPage()}
         
-        <AppointmentBooking 
-          isOpen={isAppointmentModalOpen}
-          onClose={() => setIsAppointmentModalOpen(false)}
-        />
+
         
         <Cart 
           isOpen={isCartOpen}

@@ -5,7 +5,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 40px;
+  height: 32px;
   width: 100vw;
   position: relative;
   left: 50%;
@@ -35,13 +35,13 @@
 
 .contact-item {
   color: #ffffff;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  margin-top: 3px;
+  margin-top: 1px;
 }
 
 .social-media {
@@ -68,11 +68,7 @@
 .navbar {
   background-color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  position: static;
   padding: 0 20px;
 }
 
@@ -101,7 +97,7 @@
 .logo-text {
   font-size: 18px;
   font-weight: 700;
-  color: #2d5016;
+  color: var(--primary-green);
   text-decoration: none;
   display: none;
 }
@@ -132,7 +128,7 @@
 }
 
 .navbar-link:hover {
-  color: #6b8e23;
+  color: var(--turquoise-primary);
 }
 
 .navbar-link::after {
@@ -142,7 +138,7 @@
   height: 2px;
   bottom: -5px;
   left: 50%;
-  background-color: #6b8e23;
+  background-color: var(--turquoise-primary);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -153,7 +149,7 @@
 }
 
 .navbar-link.active {
-  color: #6b8e23;
+  color: var(--turquoise-primary);
 }
 
 /* Mobile Menu Toggle */
@@ -178,7 +174,7 @@
   position: absolute;
   height: 3px;
   width: 100%;
-  background: #2d5016;
+  background: var(--primary-green);
   border-radius: 3px;
   opacity: 1;
   left: 0;
@@ -233,7 +229,8 @@
   margin-left: 60px;
 }
 
-.login-section {
+.login-section,
+.user-section {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -242,17 +239,84 @@
   transition: all 0.3s ease;
   padding: 8px 12px;
   border-radius: 4px;
+  position: relative;
 }
 
-.login-section:hover {
-  color: #6b8e23;
-  background-color: rgba(107, 142, 35, 0.1);
+.login-section:hover,
+.user-section:hover {
+  color: var(--turquoise-primary);
+  background-color: var(--bg-turquoise);
 }
 
 .login-text {
   font-size: 16px;
   font-weight: 500;
   font-family: inherit;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green), var(--turquoise-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primary-green);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 2px solid var(--light-green);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  margin-top: 5px;
+}
+
+.user-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.user-dropdown button:hover {
+  background: var(--bg-light);
+  color: var(--primary-green);
+}
+
+.user-dropdown button:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.user-dropdown button:last-child {
+  border-radius: 0 0 8px 8px;
+  color: #e53e3e;
+}
+
+.user-dropdown button:last-child:hover {
+  background: #fee;
+  color: #c53030;
 }
 
 .separator-line {
@@ -272,8 +336,8 @@
 }
 
 .appointment-icon:hover {
-  color: #6b8e23;
-  background-color: rgba(107, 142, 35, 0.1);
+  color: var(--turquoise-primary);
+  background-color: var(--bg-turquoise);
 }
 
 .appointment-icon::after {
@@ -306,7 +370,7 @@
 }
 
 .search-icon:hover {
-  color: #6b8e23;
+  color: var(--turquoise-primary);
 }
 
 .cart-section {
@@ -318,7 +382,7 @@
 }
 
 .cart-section:hover {
-  color: #6b8e23;
+  color: var(--turquoise-primary);
 }
 
 .cart-icon {
@@ -375,13 +439,20 @@
 }
 
 .appointment-link {
-  background: linear-gradient(135deg, #6b8e23, #8FBC8F);
-  color: white !important;
+  background: linear-gradient(135deg, var(--secondary-green), var(--light-green));
+  color: var(--white) !important;
   padding: 12px 20px;
   border-radius: 25px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.appointment-link:hover {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
 }
 
 /* Responsive Design */

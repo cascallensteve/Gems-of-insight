@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import Checkout from './Checkout';
 import './Cart.css';
 
 const Cart = ({ isOpen, onClose, onOpenQuickView }) => {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity <= 0) {
@@ -19,10 +21,13 @@ const Cart = ({ isOpen, onClose, onOpenQuickView }) => {
       return;
     }
     
-    // For now, show order confirmation
-    const total = getCartTotal();
-    alert(`Order confirmed! Total: KSH ${total.toLocaleString()}\nThank you for your order!`);
+    setShowCheckout(true);
+  };
+
+  const handleOrderComplete = (orderData) => {
+    alert(`Order confirmed! Order ID: ${orderData.id}\nTotal: KSH ${orderData.total.toLocaleString()}\nThank you for your order!`);
     clearCart();
+    setShowCheckout(false);
     onClose();
   };
 
@@ -137,6 +142,14 @@ const Cart = ({ isOpen, onClose, onOpenQuickView }) => {
           )}
         </div>
       </div>
+      
+      {showCheckout && (
+        <Checkout
+          cartItems={cartItems}
+          onClose={() => setShowCheckout(false)}
+          onOrderComplete={handleOrderComplete}
+        />
+      )}
     </div>
   );
 };

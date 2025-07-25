@@ -1,0 +1,632 @@
+/* About Page Styles */
+.about-page {
+  min-height: 100vh;
+  background: var(--white);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
+.about-hero {
+  background: linear-gradient(135deg, var(--bg-light), var(--bg-turquoise));
+  padding: 80px 0;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.hero-image {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.hero-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+/* Mission Section */
+.mission-section {
+  padding: 100px 0;
+  background: var(--white);
+}
+
+.mission-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.mission-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 30px 0;
+}
+
+.mission-text > p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  line-height: 1.7;
+  margin: 0 0 40px 0;
+}
+
+.mission-values {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.value-item h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin: 0 0 8px 0;
+}
+
+.value-item p {
+  font-size: 1rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.mission-image {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.mission-image img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+}
+
+/* Medical Missionary Section */
+.medical-missionary-section {
+  background: linear-gradient(135deg, var(--bg-light), var(--white));
+  padding: 100px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-header h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 15px 0;
+}
+
+.section-header p {
+  font-size: 1.3rem;
+  color: var(--turquoise-primary);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Missionary Quote */
+.missionary-quote {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 60px;
+  border-left: 6px solid var(--turquoise-primary);
+}
+
+.missionary-quote blockquote {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-light);
+  font-style: italic;
+  margin: 0 0 20px 0;
+}
+
+.missionary-quote cite {
+  font-weight: 600;
+  color: var(--primary-green);
+  font-size: 1rem;
+}
+
+/* Training Modules */
+.training-modules {
+  background: var(--white);
+  padding: 50px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 50px;
+}
+
+.training-modules h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 40px 0;
+  text-align: center;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.module-card {
+  background: linear-gradient(135deg, var(--bg-turquoise), var(--white));
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(110, 231, 183, 0.2);
+  border-color: var(--turquoise-primary);
+}
+
+.module-card h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 10px 0;
+}
+
+.module-card h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.module-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration {
+  background: var(--turquoise-primary);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-green);
+}
+
+.total-cost {
+  text-align: center;
+  padding: 25px;
+  background: linear-gradient(135deg, var(--secondary-green), var(--light-green));
+  color: var(--white);
+  border-radius: 12px;
+  font-size: 1.3rem;
+}
+
+/* Payment Methods */
+.payment-methods {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.payment-methods h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.payment-option {
+  background: var(--bg-turquoise);
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid var(--turquoise-primary);
+}
+
+.payment-option h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin: 0 0 15px 0;
+}
+
+.payment-option p {
+  margin: 8px 0;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.payment-option strong {
+  color: var(--primary-green);
+}
+
+/* Registration Section */
+.registration-section {
+  margin-bottom: 40px;
+}
+
+.register-btn {
+  background: linear-gradient(135deg, var(--turquoise-glow), var(--turquoise-primary));
+  color: var(--primary-green);
+  border: none;
+  padding: 15px 40px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto 40px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.register-btn:hover {
+  background: linear-gradient(135deg, var(--turquoise-primary), var(--turquoise-light));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(110, 231, 183, 0.3);
+}
+
+/* Registration Form */
+.registration-form-container {
+  background: var(--white);
+  padding: 50px;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-light);
+}
+
+.registration-form-container h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin: 0 0 25px 0;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 10px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--white);
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--turquoise-primary);
+  background: var(--bg-turquoise);
+  box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error {
+  border-color: #e74c3c;
+}
+
+/* Module Selection */
+.module-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  margin-top: 2px;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--secondary-green), var(--light-green));
+  color: var(--white);
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 20px;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+/* Form Notes */
+.form-notes {
+  margin-top: 40px;
+  padding: 30px;
+  background: var(--bg-light);
+  border-radius: 12px;
+  border-left: 6px solid var(--turquoise-primary);
+}
+
+.form-notes h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin: 0 0 15px 0;
+}
+
+.form-notes ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.form-notes li {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.form-notes strong {
+  color: var(--primary-green);
+}
+
+/* Contact Info */
+.contact-info {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.contact-info h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0 0 25px 0;
+}
+
+.contact-details {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.contact-details p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Error Messages */
+.error-text {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .hero-content,
+  .mission-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.5rem;
+  }
+  
+  .payment-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-details {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero,
+  .mission-section,
+  .medical-missionary-section {
+    padding: 60px 0;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+  
+  .section-header h2 {
+    font-size: 2.2rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .registration-form-container {
+    padding: 30px 20px;
+  }
+  
+  .training-modules,
+  .payment-methods,
+  .missionary-quote {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hero-text p {
+    font-size: 1rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .checkbox-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation */
+.about-page {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

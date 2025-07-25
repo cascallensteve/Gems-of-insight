@@ -25,22 +25,22 @@ const Hero = () => {
   }, []);
 
   useEffect(() => {
-    const phrases = ['STAY HOME', 'SHOP ONLINE'];
+    const phrases = ['Stay Healthy\nShop Online', 'Live Better\nFeel Great', 'With Gems of Insight\nShop Now!'];
     const currentText = phrases[currentPhase];
     
-    if (currentPhase < phrases.length) {
+    if (currentPhase < phrases.length && currentText) {
       let i = 0;
       setTypedText('');
       
       const typing = setInterval(() => {
         if (i < currentText.length) {
-          setTypedText(prev => prev + currentText[i]);
+          setTypedText(currentText.substring(0, i + 1));
           i++;
         } else {
           clearInterval(typing);
-          // Wait 2 seconds before starting next phrase
+          // Move to next phrase after a delay
           setTimeout(() => {
-            setCurrentPhase(prev => prev + 1);
+            setCurrentPhase(prev => (prev + 1) % phrases.length);
           }, 2000);
         }
       }, 100);
@@ -72,16 +72,13 @@ const Hero = () => {
             <div className="card-badge">50% OFF</div>
             <div className="main-card-overlay-content">
               <div className="typed-text-container animate-slide-down">
-                <div className="typed-text">{typedText}<span className="cursor">|</span></div>
+                <div className="typed-text" style={{whiteSpace: 'pre-line'}}>{typedText}<span className="cursor">|</span></div>
               </div>
-              <div className="years-counter-circle animate-fade-in-delay">
-                <div className="circle-container">
-                  <div className="years-number">{Math.floor(yearsCount)}</div>
-                  <div className="years-text">Years of Excellence</div>
-                </div>
-              </div>
-              <button className="happy-shop-button animate-bounce-in">
-                HAPPY SHOP NOW
+              <button 
+                className="happy-shop-button animate-bounce-in"
+                onClick={() => window.location.href = '/shop'}
+              >
+                Shop <span className="swinging-arrow">→</span>
               </button>
             </div>
           </div>
@@ -90,7 +87,7 @@ const Hero = () => {
         <div className="hero-card right-card animate-slide-right">
           <div className="card-image">
             <img 
-              src="https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg" 
+              src="https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg"
               alt="Fresh Exotic Fruit"
             />
             <div className="card-badge">🌱</div>
@@ -103,16 +100,12 @@ const Hero = () => {
               <div className="leaf leaf-3">🌱</div>
               <div className="leaf leaf-4">🌿</div>
             </div>
-            <div className="product-actions animate-actions-slide">
-              <button className="action-btn add-to-cart" title="Add to Cart">+</button>
-              <button className="action-btn favorite" title="Add to Favorites">❤️</button>
-              <button className="action-btn view-product" title="View Product">👁️</button>
-            </div>
+
             <div className="card-overlay-content animate-text-bottom">
               <h3>fresh exotic fruit</h3>
-              <p className="product-description">Fresh, natural, and packed with vitamins. Perfect for your healthy lifestyle.</p>
+              <p className="product-description">By any Natural Disease Remedy from us.</p>
               <button className="card-overlay-button simple-view-btn">
-                👁️ View
+                Start Now
               </button>
             </div>
           </div>
@@ -121,7 +114,7 @@ const Hero = () => {
         <div className="hero-card right-card animate-slide-right-delay">
           <div className="card-image">
             <img 
-              src="https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg" 
+              src="https://res.cloudinary.com/djksfayfu/image/upload/v1753445611/pregnant-woman-receiving-bottle-pills-from-specialist-cure-disease-healthcare-physician-giving-prescription-treatment-medicine-patient-with-pregnancy-medical-office_qxkcps.jpg"
               alt="Healthy Food"
             />
             <div className="card-badge">50% OFF</div>
@@ -131,16 +124,12 @@ const Hero = () => {
               <div className="leaf leaf-7">🌱</div>
               <div className="leaf leaf-8">🌿</div>
             </div>
-            <div className="product-actions animate-actions-slide-delay">
-              <button className="action-btn add-to-cart" title="Add to Cart">+</button>
-              <button className="action-btn favorite" title="Add to Favorites">❤️</button>
-              <button className="action-btn view-product" title="View Product">👁️</button>
-            </div>
+
             <div className="card-overlay-content animate-text-bottom-delay">
-              <h3>be fitness Healthy Food</h3>
-              <p className="product-description">Organic vegetables rich in nutrients. Your path to a healthier you.</p>
+              <h3>Seek For Medical Consultation</h3>
+              <p className="product-description">Professional Natural Wellness Specialists are here to help you.</p>
               <button className="card-overlay-button simple-view-btn">
-                👁️ View
+                Book Here
               </button>
             </div>
           </div>
