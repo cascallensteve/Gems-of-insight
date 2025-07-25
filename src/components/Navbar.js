@@ -123,12 +123,48 @@ const Navbar = ({ currentPage, setCurrentPage, openAppointmentModal, openCart, c
             </li>
             
             {/* Mobile-only items */}
+            {currentUser ? (
+              <>
+                <li className="navbar-item mobile-only">
+                  <div className="mobile-user-info" onClick={(e) => e.stopPropagation()}>
+                    <div className="mobile-user-avatar">
+                      <span>{currentUser.firstName?.charAt(0) || currentUser.name?.charAt(0) || 'U'}</span>
+                    </div>
+                    <span className="mobile-user-name">Hi, {currentUser.firstName || currentUser.name || 'User'}</span>
+                  </div>
+                </li>
+                <li className="navbar-item mobile-only">
+                  <button className="navbar-link" onClick={() => handleNavClick('profile')}>
+                    👤 My Profile
+                  </button>
+                </li>
+                <li className="navbar-item mobile-only">
+                  <button className="navbar-link" onClick={() => handleNavClick('orders')}>
+                    📦 My Orders
+                  </button>
+                </li>
+                <li className="navbar-item mobile-only">
+                  <button className="navbar-link logout-link" onClick={() => {
+                    onLogout();
+                    setIsMobileMenuOpen(false);
+                  }}>
+                    🚪 Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li className="navbar-item mobile-only">
+                <button className="navbar-link login-link" onClick={() => handleNavClick('login')}>
+                  🔑 Login
+                </button>
+              </li>
+            )}
             <li className="navbar-item mobile-only">
               <button className="navbar-link appointment-link" onClick={() => {
                 openAppointmentModal();
                 setIsMobileMenuOpen(false);
               }}>
-                Book Appointment
+                📅 Book Appointment
               </button>
             </li>
           </ul>
