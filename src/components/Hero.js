@@ -65,9 +65,24 @@ const Hero = () => {
     <section className="hero">
       {/* Animated Background Elements */}
       <div className="hero-background">
-        <div className="floating-element herb-1">🌿</div>
-        <div className="floating-element herb-2">🍃</div>
-        <div className="floating-element herb-3">🌱</div>
+        <div className="floating-element herb-1">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C12 2 17 5 17 12C17 15.866 14.866 19 11 19C7.134 19 5 15.866 5 12C5 5 12 2 12 2Z" fill="currentColor" opacity="0.8"/>
+            <path d="M12 6C12 6 15 8 15 12C15 14.209 13.209 16 11 16C8.791 16 7 14.209 7 12C7 8 12 6 12 6Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div className="floating-element herb-2">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 8C17 8 20 10 20 15C20 18.314 17.314 21 14 21C10.686 21 8 18.314 8 15C8 10 17 8 17 8Z" fill="currentColor" opacity="0.7"/>
+            <path d="M7 6C7 6 4 8 4 13C4 16.314 6.686 19 10 19C13.314 19 16 16.314 16 13C16 8 7 6 7 6Z" fill="currentColor" opacity="0.9"/>
+          </svg>
+        </div>
+        <div className="floating-element herb-3">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L12 12M12 12C12 15.314 9.314 18 6 18C2.686 18 0 15.314 0 12C0 8.686 2.686 6 6 6C9.314 6 12 8.686 12 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M12 12C12 15.314 14.686 18 18 18C21.314 18 24 15.314 24 12C24 8.686 21.314 6 18 6C14.686 6 12 8.686 12 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
       </div>
 
       {/* Carousel Container */}

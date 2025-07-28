@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import './NewArrivals.css';
 
 const NewArrivals = ({ onNavigateToShop }) => {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const { addToCart } = useCart();
   const [cartNotification, setCartNotification] = useState({ show: false, productName: '' });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [favorites, setFavorites] = useState([]);
@@ -98,6 +104,24 @@ const NewArrivals = ({ onNavigateToShop }) => {
   ];
 
   const handleAddToCart = (product) => {
+    if (!currentUser) {
+      // Show login prompt if user is not logged in
+      if (window.confirm('Please login to add items to cart. Would you like to login now?')) {
+        navigate('/login');
+      }
+      return;
+    }
+
+    // Add to cart if user is logged in
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: parseFloat(product.price.replace('KSh ', '').replace(',', '')),
+      image: product.image,
+      quantity: 1
+    };
+    
+    addToCart(cartItem);
     setCartNotification({ show: true, productName: product.name });
     setTimeout(() => {
       setCartNotification({ show: false, productName: '' });
@@ -152,11 +176,13 @@ const NewArrivals = ({ onNavigateToShop }) => {
                   +
                 </button>
                 <button 
-                  className="action-btn favorite" 
-                  onClick={() => handleToggleFavorite(product)}
-                  title="Add to Favorites"
+                className="action-btn favorite" 
+                onClick={() => handleToggleFavorite(product)}
+                title="Add to Favorites"
                 >
-                  ❤️
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill={favorites.includes(product.id) ? "#ef4444" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -217,7 +243,12 @@ const NewArrivals = ({ onNavigateToShop }) => {
                   >
                     + Add to Cart
                   </button>
-                  <button className="modal-favorite">❤️ Favorite</button>
+                  <button className="modal-favorite">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Favorite
+                  </button>
                 </div>
               </div>
             </div>
