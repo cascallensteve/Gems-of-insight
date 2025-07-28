@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Hero.css';
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef(null);
   const slideInterval = useRef(null);
@@ -61,6 +63,20 @@ const Hero = () => {
   const goToNext = () => goToSlide((currentSlide + 1) % slides.length);
   const goToPrev = () => goToSlide((currentSlide - 1 + slides.length) % slides.length);
 
+  const handleSlideAction = (slide) => {
+    switch(slide.cta) {
+      case 'Shop Now':
+      case 'Explore':
+        navigate('/shop');
+        break;
+      case 'Book Now':
+        navigate('/consultation');
+        break;
+      default:
+        navigate('/shop');
+    }
+  };
+
   return (
     <section className="hero">
       {/* Animated Background Elements */}
@@ -102,7 +118,10 @@ const Hero = () => {
                   <div className="slide-content">
                     <h2 className="slide-title">{slide.title}</h2>
                     <p className="slide-description">{slide.description}</p>
-                    <button className="slide-button">
+                    <button 
+                      className="slide-button"
+                      onClick={() => handleSlideAction(slide)}
+                    >
                       {slide.cta} <span className="arrow-icon">→</span>
                     </button>
                   </div>

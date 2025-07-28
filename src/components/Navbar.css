@@ -90,7 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 130px;
+  height: 150px;
   padding: 15px 0;
 }
 
@@ -102,11 +102,11 @@
 }
 
 .logo-image {
-  width: 500px;
+  width: 600px;
   height: auto;
   object-fit: contain;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 120px;
+  max-height: 140px;
 }
 
 .logo-text {
@@ -614,30 +614,44 @@
   .social-media {
     justify-content: center;
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    align-items: center;
   }
   
   .social-link {
-    padding: 6px;
-    color: #ffffff;
-    opacity: 1;
+    padding: 8px;
+    color: #ffffff !important;
+    opacity: 1 !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
   }
 
   /* Mobile Navigation */
   .navbar-container {
     position: relative;
     padding: 15px 15px;
-    height: 110px;
+    height: 130px;
+    z-index: 10001;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 
   .mobile-menu-toggle {
     display: block;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    z-index: 10000;
+    z-index: 10003;
   }
 
   .mobile-menu-toggle:hover {
@@ -657,7 +671,7 @@
     align-items: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    z-index: 1001;
+    z-index: 10002;
   }
 
   .mobile-cart:hover {
@@ -677,26 +691,26 @@
 
   .navbar-menu {
     position: fixed;
-    top: 0;
+    top: 130px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 130px);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    padding: 60px 20px;
+    padding: 40px 20px;
     box-shadow: none;
     border-radius: 0;
     transform: translateX(-100%);
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 9999;
+    z-index: 1000;
     gap: 15px;
     margin: 0;
     list-style: none;
@@ -755,8 +769,8 @@
   }
 
   .logo-image {
-    width: 400px;
-    max-height: 100px;
+    width: 480px;
+    max-height: 120px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -790,15 +804,25 @@
     align-items: center;
     gap: 4px;
   }
+
+  .social-media {
+    gap: 8px;
+  }
+
+  .social-link {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+  }
   
   .logo-image {
-    width: 320px;
-    max-height: 90px;
+    width: 400px;
+    max-height: 110px;
   }
   
   .navbar-container {
     padding: 15px 15px;
-    height: 105px;
+    height: 125px;
   }
   
   .cart-text-mobile {
