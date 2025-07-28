@@ -116,7 +116,7 @@ const NewArrivals = ({ onNavigateToShop }) => {
     const cartItem = {
       id: product.id,
       name: product.name,
-      price: parseFloat(product.price.replace('KSh ', '').replace(',', '')),
+      price: product.price, // Keep original price format
       image: product.image,
       quantity: 1
     };
@@ -219,8 +219,13 @@ const NewArrivals = ({ onNavigateToShop }) => {
       {cartNotification.show && (
         <div className="cart-notification">
           <div className="notification-content">
-            <p>✅ {cartNotification.productName} added to cart!</p>
-            <button className="view-cart-btn">View Cart</button>
+            <p>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '8px', color: '#22c55e'}}>
+                <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              {cartNotification.productName} added to cart!
+            </p>
+            <button className="view-cart-btn" onClick={() => navigate('/cart')}>View Cart</button>
           </div>
         </div>
       )}
