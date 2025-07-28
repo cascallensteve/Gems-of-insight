@@ -19,19 +19,29 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
   const isActive = (path) => location.pathname === path;
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    const newState = !isMobileMenuOpen;
+    setIsMobileMenuOpen(newState);
+    
+    // Prevent body scroll when mobile menu is open
+    if (newState) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
   };
 
   const handleNavClick = (path) => {
     navigate(path);
     setIsMobileMenuOpen(false); // Close mobile menu after navigation
     setShowUserMenu(false); // Close user menu after navigation
+    document.body.classList.remove('mobile-menu-open'); // Remove body scroll lock
   };
 
   const handleLogout = () => {
     // Navigate to logout page instead of showing alerts
     setIsMobileMenuOpen(false);
     setShowUserMenu(false);
+    document.body.classList.remove('mobile-menu-open'); // Remove body scroll lock
     navigate('/logout');
   };
 
@@ -62,6 +72,13 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [showUserMenu]);
+
+  // Cleanup mobile menu body class on unmount
+  React.useEffect(() => {
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, []);
 
   return (
     <>
