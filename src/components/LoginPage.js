@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
-import apiService from '../services/api';
+// import apiService from '../services/api'; // Commented out as it's not used currently
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = ({ onLogin, onClose }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Commented out as it's not used currently
   const { login } = useAuth();
   const [authMode, setAuthMode] = useState('login'); // 'login', 'signup', 'forgot', 'reset'
   const [formData, setFormData] = useState({

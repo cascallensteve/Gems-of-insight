@@ -8,7 +8,7 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getCartCount, getCartTotal } = useCart();
-  const { currentUser, logout, isLoading } = useAuth();
+  const { currentUser, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
