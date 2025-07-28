@@ -1,0 +1,304 @@
+.logout-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    var(--primary-green) 0%, 
+    var(--secondary-green) 35%, 
+    var(--turquoise-primary) 70%, 
+    var(--light-green) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.logout-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.logout-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 500px;
+}
+
+.logout-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 25px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInScale 0.6s ease-out;
+}
+
+.logout-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 15px 25px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.logout-icon {
+  margin-bottom: 30px;
+  color: var(--primary-green);
+  animation: float 3s ease-in-out infinite;
+}
+
+.logout-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--primary-green), var(--turquoise-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-message {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--turquoise-primary);
+  background: linear-gradient(135deg, var(--turquoise-primary), var(--primary-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-confirm-logout,
+.btn-cancel-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 150px;
+  justify-content: center;
+}
+
+.btn-confirm-logout {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-confirm-logout:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-cancel-logout {
+  background: linear-gradient(135deg, var(--primary-green), var(--turquoise-primary));
+  color: white;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.btn-cancel-logout:hover {
+  background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* Logout Processing Styles */
+.logout-processing {
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.logout-spinner {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(34, 197, 94, 0.2);
+  border-left: 4px solid var(--primary-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.logout-processing-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin-bottom: 15px;
+}
+
+.logout-processing-message {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.logout-success-animation {
+  margin-top: 20px;
+  color: var(--primary-green);
+  animation: successPulse 2s ease-in-out infinite;
+}
+
+.check-path {
+  stroke-dasharray: 25;
+  stroke-dashoffset: 25;
+  animation: checkDraw 1.5s ease-in-out 1s forwards;
+}
+
+/* Animations */
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes checkDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .logout-card {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+  
+  .logout-title {
+    font-size: 2rem;
+  }
+  
+  .logout-message {
+    font-size: 1rem;
+  }
+  
+  .logout-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-confirm-logout,
+  .btn-cancel-logout {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-page {
+    padding: 15px;
+  }
+  
+  .logout-card {
+    padding: 30px 20px;
+  }
+  
+  .logout-title {
+    font-size: 1.8rem;
+  }
+  
+  .logout-processing-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* Additional smooth entrance animation for the whole page */
+.logout-page {
+  animation: pageSlideIn 0.8s ease-out;
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

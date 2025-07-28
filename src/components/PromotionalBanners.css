@@ -1,0 +1,156 @@
+.promotional-banners {
+  padding: 80px 0;
+  background: #f8fafc;
+}
+
+.promotional-banners .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.banners-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+.promo-banner {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.promo-banner:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.banner-content {
+  flex: 1;
+  padding: 40px;
+  z-index: 2;
+  position: relative;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, #4ADE80, #22c55e);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+
+.banner-content h3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 25px 0;
+  line-height: 1.2;
+}
+
+.promo-button {
+  background: linear-gradient(135deg, #4ADE80, #22c55e);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+
+.promo-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
+}
+
+.banner-image {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.promo-banner:hover .banner-image img {
+  transform: scale(1.05);
+}
+
+/* Specific styling for salad banner */
+.salad-banner {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+/* Specific styling for drinks banner */
+.drinks-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .promotional-banners {
+    padding: 60px 0;
+  }
+  
+  .banners-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .promo-banner {
+    flex-direction: column;
+    min-height: 350px;
+  }
+  
+  .banner-content {
+    padding: 30px 20px;
+    text-align: center;
+  }
+  
+  .banner-content h3 {
+    font-size: 24px;
+  }
+  
+  .banner-image {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .promotional-banners {
+    padding: 40px 0;
+  }
+  
+  .banner-content {
+    padding: 25px 15px;
+  }
+  
+  .banner-content h3 {
+    font-size: 20px;
+  }
+  
+  .promo-button {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
+}

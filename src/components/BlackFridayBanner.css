@@ -1,0 +1,173 @@
+.black-friday-banner {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.black-friday-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(74, 222, 128, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.black-friday-banner .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.banner-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.banner-text {
+  text-align: left;
+}
+
+.banner-text h2 {
+  font-size: 48px;
+  font-weight: 900;
+  color: #4ADE80;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.banner-text h3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 30px 0;
+  line-height: 1.3;
+}
+
+.discover-button {
+  background: linear-gradient(135deg, #4ADE80, #22c55e);
+  color: white;
+  border: none;
+  padding: 18px 40px;
+  border-radius: 35px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(74, 222, 128, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.discover-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(74, 222, 128, 0.4);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.banner-image {
+  position: relative;
+  height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.banner-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Floating elements for visual appeal */
+.black-friday-banner::after {
+  content: '🛍️';
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  font-size: 60px;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .black-friday-banner {
+    padding: 60px 0;
+  }
+  
+  .banner-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  
+  .banner-text {
+    text-align: center;
+  }
+  
+  .banner-text h2 {
+    font-size: 36px;
+  }
+  
+  .banner-text h3 {
+    font-size: 24px;
+  }
+  
+  .banner-image {
+    height: 300px;
+  }
+  
+  .discover-button {
+    padding: 15px 35px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .black-friday-banner {
+    padding: 40px 0;
+  }
+  
+  .banner-text h2 {
+    font-size: 28px;
+  }
+  
+  .banner-text h3 {
+    font-size: 20px;
+  }
+  
+  .banner-image {
+    height: 250px;
+  }
+  
+  .discover-button {
+    padding: 12px 30px;
+    font-size: 14px;
+  }
+}
