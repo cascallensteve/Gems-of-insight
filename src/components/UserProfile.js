@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { resetPassword, getUserOrders, getUserProfile, updateUserProfile } from '../services/api';
+import { resetPassword, getUserOrders } from '../services/api';
 import AdminBlogManager from './AdminBlogManager';
 import './UserProfile.css';
 
 const UserProfile = () => {
   const { currentUser, updateUser, logout } = useAuth();
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: '',
-    address: '',
-    city: '',
-    newsletter: false
+    firstName: currentUser?.firstName || currentUser?.first_name || '',
+    lastName: currentUser?.lastName || currentUser?.last_name || '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || currentUser?.phone_number || '',
+    dateOfBirth: currentUser?.dateOfBirth || currentUser?.date_of_birth || '',
+    gender: currentUser?.gender || '',
+    address: currentUser?.address || '',
+    city: currentUser?.city || '',
+    newsletter: currentUser?.newsletter || false
   });
   const [activeTab, setActiveTab] = useState('profile');
   const [showAdminBlog, setShowAdminBlog] = useState(false);
@@ -34,55 +32,12 @@ const UserProfile = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
-  // Load user profile data on component mount
-  useEffect(() => {
-    loadUserProfile();
-  }, []);
-
-  // Update form data when profile data changes
-  useEffect(() => {
-    if (profileData) {
-      setFormData({
-        firstName: profileData.first_name || '',
-        lastName: profileData.last_name || '',
-        email: profileData.email || '',
-        phone: profileData.phone_number || profileData.phone || '',
-        dateOfBirth: profileData.date_of_birth || profileData.dateOfBirth || '',
-        gender: profileData.gender || '',
-        address: profileData.address || '',
-        city: profileData.city || '',
-        newsletter: profileData.newsletter || false
-      });
-    }
-  }, [profileData]);
-
   // Load user orders
   useEffect(() => {
     if (activeTab === 'orders') {
       loadUserOrders();
     }
   }, [activeTab]);
-
-  const loadUserProfile = async () => {
-    try {
-      setLoading(true);
-      const profile = await getUserProfile();
-      console.log('Fetched profile data:', profile);
-      setProfileData(profile.user || profile);
-    } catch (error) {
-      console.error('Error loading user profile:', error);
-      // Fallback to currentUser data if API fails
-      if (currentUser) {
-        setProfileData(currentUser);
-      }
-      setMessage({ 
-        type: 'error', 
-        text: 'Could not load profile data. Please refresh the page.' 
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const loadUserOrders = async () => {
     setLoadingOrders(true);
@@ -104,27 +59,8 @@ const UserProfile = () => {
     return 'Good evening';
   };
 
-  const getUserDisplayName = () => {
-    if (profileData?.first_name) {
-      return profileData.first_name;
-    }
-    if (profileData?.firstName) {
-      return profileData.firstName;
-    }
-    if (currentUser?.firstName || currentUser?.first_name) {
-      return currentUser.firstName || currentUser.first_name;
-    }
-    return 'User';
-  };
-
-  const getUserFullName = () => {
-    const firstName = profileData?.first_name || profileData?.firstName || currentUser?.firstName || currentUser?.first_name || '';
-    const lastName = profileData?.last_name || profileData?.lastName || currentUser?.lastName || currentUser?.last_name || '';
-    return `${firstName} ${lastName}`.trim() || 'User';
-  };
-
   const getMembershipDuration = () => {
-    const memberSince = profileData?.date_joined || profileData?.createdAt || currentUser?.createdAt || currentUser?.joinedDate;
+    const memberSince = currentUser?.createdAt || currentUser?.joinedDate;
     if (!memberSince) return 'New member';
     
     const joinDate = new Date(memberSince);
@@ -137,10 +73,6 @@ const UserProfile = () => {
     return `${Math.floor(diffDays / 365)} years`;
   };
 
-  const getUserEmail = () => {
-    return profileData?.email || currentUser?.email || '';
-  };
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -151,48 +83,28 @@ const UserProfile = () => {
 
   const handleSave = async () => {
     try {
-      const updateData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        phone_number: formData.phone,
-        date_of_birth: formData.dateOfBirth,
-        gender: formData.gender,
-        address: formData.address,
-        city: formData.city,
-        newsletter: formData.newsletter
-      };
-      
-      const updatedProfile = await updateUserProfile(updateData);
-      setProfileData(updatedProfile.user || updatedProfile);
-      
-      // Also update the auth context
-      updateUser(formData);
-      
+      await updateUser(formData);
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
       setIsEditing(false);
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (error) {
-      console.error('Error updating profile:', error);
       setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     }
   };
 
   const handleCancel = () => {
-    if (profileData) {
-      setFormData({
-        firstName: profileData.first_name || '',
-        lastName: profileData.last_name || '',
-        email: profileData.email || '',
-        phone: profileData.phone_number || profileData.phone || '',
-        dateOfBirth: profileData.date_of_birth || profileData.dateOfBirth || '',
-        gender: profileData.gender || '',
-        address: profileData.address || '',
-        city: profileData.city || '',
-        newsletter: profileData.newsletter || false
-      });
-    }
+    setFormData({
+      firstName: currentUser?.firstName || currentUser?.first_name || '',
+      lastName: currentUser?.lastName || currentUser?.last_name || '',
+      email: currentUser?.email || '',
+      phone: currentUser?.phone || currentUser?.phone_number || '',
+      dateOfBirth: currentUser?.dateOfBirth || currentUser?.date_of_birth || '',
+      gender: currentUser?.gender || '',
+      address: currentUser?.address || '',
+      city: currentUser?.city || '',
+      newsletter: currentUser?.newsletter || false
+    });
     setIsEditing(false);
     setMessage({ type: '', text: '' });
   };
@@ -255,26 +167,13 @@ const UserProfile = () => {
     { id: 'APT-002', date: '2024-02-01', time: '2:30 PM', specialist: 'Dr. James Chen' }
   ];
 
-  if (loading) {
-    return (
-      <div className="user-profile">
-        <div className="profile-container">
-          <div className="profile-loading">
-            <div className="loading-spinner"></div>
-            <p>Loading your profile...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="user-profile">
       <div className="profile-container">
         {/* Welcome Message */}
         <div className="welcome-message">
           <div className="welcome-content">
-            <h2>Hi, {getUserDisplayName()}! 🌟</h2>
+            <h2>Hi, {currentUser?.firstName || currentUser?.first_name || 'User'}! 🌟</h2>
             <p>{getGreeting()}! Welcome back to your wellness dashboard. You've been a valued member for {getMembershipDuration()}. Manage your health journey, track your orders, and personalize your experience.</p>
           </div>
         </div>
@@ -291,14 +190,14 @@ const UserProfile = () => {
         <div className="profile-header">
           <div className="profile-avatar">
             <div className="avatar-circle">
-              {getUserDisplayName().charAt(0).toUpperCase()}
+              {(currentUser?.firstName || currentUser?.first_name || 'U').charAt(0).toUpperCase()}
             </div>
           </div>
           <div className="profile-info">
-            <h1>{getUserFullName()}</h1>
-            <p>{getUserEmail()}</p>
+            <h1>{currentUser?.firstName || currentUser?.first_name || 'User'} {currentUser?.lastName || currentUser?.last_name || ''}</h1>
+            <p>{currentUser?.email}</p>
             <p style={{ color: '#666', fontSize: '0.9rem', marginTop: '5px' }}>
-              Member since {new Date(profileData?.date_joined || profileData?.createdAt || currentUser?.createdAt || Date.now()).toLocaleDateString()}
+              Member since {new Date(currentUser?.createdAt || Date.now()).toLocaleDateString()}
             </p>
             <div className="profile-stats">
               <div className="stat">
@@ -310,7 +209,7 @@ const UserProfile = () => {
                 <span className="stat-label">Member</span>
               </div>
               <div className="stat">
-                <span className="stat-number">{profileData?.is_staff || profileData?.role === 'admin' || currentUser?.role === 'admin' ? 'Admin' : 'Active'}</span>
+                <span className="stat-number">{currentUser?.role === 'admin' ? 'Admin' : 'Active'}</span>
                 <span className="stat-label">Status</span>
               </div>
             </div>
@@ -360,7 +259,7 @@ const UserProfile = () => {
           >
             ⚙️ Account Settings
           </button>
-          {(profileData?.is_staff || profileData?.role === 'admin' || currentUser?.role === 'admin' || currentUser?.userType === 'admin') && (
+          {(currentUser?.role === 'admin' || currentUser?.userType === 'admin') && (
             <button 
               className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
               onClick={() => setActiveTab('admin')}
@@ -387,7 +286,7 @@ const UserProfile = () => {
                       placeholder="Enter your first name"
                     />
                   ) : (
-                    <div className="form-value">{profileData?.first_name || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.firstName || currentUser?.first_name || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -400,7 +299,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.last_name || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.lastName || currentUser?.last_name || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -413,7 +312,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.email || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.email}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -426,7 +325,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.phone_number || profileData?.phone || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.phone || currentUser?.phone_number || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -439,7 +338,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.date_of_birth || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.dateOfBirth || currentUser?.date_of_birth || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -457,7 +356,7 @@ const UserProfile = () => {
                       <option value="prefer-not-to-say">Prefer not to say</option>
                     </select>
                   ) : (
-                    <div className="form-value">{profileData?.gender || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.gender || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group full-width">
@@ -470,7 +369,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.address || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.address || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -483,7 +382,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{profileData?.city || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.city || 'Not provided'}</div>
                   )}
                 </div>
               </div>
@@ -625,7 +524,7 @@ const UserProfile = () => {
                 <div className="setting-item">
                   <div className="setting-info">
                     <h4>Account Created</h4>
-                    <p>{new Date(profileData?.date_joined || profileData?.createdAt || currentUser?.createdAt || Date.now()).toLocaleDateString()}</p>
+                    <p>{new Date(currentUser?.createdAt || Date.now()).toLocaleDateString()}</p>
                   </div>
                 </div>
               </div>
@@ -673,7 +572,7 @@ const UserProfile = () => {
                       type="checkbox"
                       id="newsletter"
                       name="newsletter"
-                      checked={isEditing ? formData.newsletter : profileData?.newsletter}
+                      checked={isEditing ? formData.newsletter : currentUser?.newsletter}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />

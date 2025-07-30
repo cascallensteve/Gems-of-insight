@@ -56,11 +56,11 @@
 /* Countdown Banner */
 .countdown-banner {
   background: linear-gradient(135deg, #1a202c, #2d3748);
-  border-radius: 25px;
-  padding: 40px;
-  margin-bottom: 60px;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
@@ -148,9 +148,9 @@
 /* Offers Grid */
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 40px;
-  margin-bottom: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
 }
 
 .offer-card {
