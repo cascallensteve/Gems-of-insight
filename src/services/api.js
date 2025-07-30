@@ -69,6 +69,35 @@ export const getUserOrders = async () => {
   return response.data;
 };
 
+// User Profile API
+export const getUserProfile = async () => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  
+  const response = await axios.get(`${BASE_URL}/user/profile`, {
+    headers: {
+      'Authorization': `Token ${token}`
+    }
+  });
+  return response.data;
+};
+
+export const updateUserProfile = async (profileData) => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  
+  const response = await axios.put(`${BASE_URL}/user/profile`, profileData, {
+    headers: {
+      'Authorization': `Token ${token}`
+    }
+  });
+  return response.data;
+};
+
 // M-Pesa Payment API
 export const initiateMpesaPayment = async (paymentData) => {
   const response = await axios.post(`${BASE_URL}/payments/mpesa`, paymentData);
@@ -95,6 +124,8 @@ const apiService = {
   resetPassword,
   createOrder,
   getUserOrders,
+  getUserProfile,
+  updateUserProfile,
   initiateMpesaPayment,
   checkPaymentStatus
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import './NewFooter.css';
-import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaTiktok } from 'react-icons/fa';
 import { MdLocalShipping, MdSupportAgent, MdEco } from 'react-icons/md';
 import { BsShieldLock, BsTelephone, BsEnvelope } from 'react-icons/bs';
 
@@ -38,10 +38,51 @@ const NewFooter = () => {
             <h3 className="footer-logo">GemsOfInsight</h3>
             <p className="footer-tagline">Your trusted partner in natural wellness and organic living</p>
             <div className="social-links">
-              <a href="#" className="social-link" aria-label="Facebook"><FaFacebook /></a>
-              <a href="#" className="social-link" aria-label="Instagram"><FaInstagram /></a>
-              <a href="#" className="social-link" aria-label="Twitter"><FaTwitter /></a>
-              <a href="#" className="social-link" aria-label="YouTube"><FaYoutube /></a>
+              <a 
+                href="https://www.facebook.com/share/19mQFYr7oK/" 
+                className="social-link facebook" 
+                aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaFacebook />
+              </a>
+              <a 
+                href="https://www.instagram.com/gems_of_insight/" 
+                className="social-link instagram" 
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaInstagram />
+              </a>
+              <a 
+                href="https://x.com/gems_ofinsight" 
+                className="social-link twitter" 
+                aria-label="Twitter/X"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTwitter />
+              </a>
+              <a 
+                href="https://youtube.com/@gemsofinsight_official" 
+                className="social-link youtube" 
+                aria-label="YouTube"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaYoutube />
+              </a>
+              <a 
+                href="https://tiktok.com/@gems_ofinsight" 
+                className="social-link tiktok" 
+                aria-label="TikTok"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTiktok />
+              </a>
             </div>
           </div>
 

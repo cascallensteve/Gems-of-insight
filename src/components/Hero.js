@@ -12,7 +12,7 @@ const Hero = () => {
   const slides = [
     {
       id: 1,
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753883467/happy-woman-using-natural-face-mask_amxrvi.webp",
       title: "Premium Natural Remedies",
       description: "Discover our collection of organic herbal solutions",
       cta: "Shop Now"
@@ -20,7 +20,7 @@ const Hero = () => {
     {
       id: 2,
       image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753870920/background_wam447.webp",
-      title: "Gesms of Insight classes ",
+      title: "Gems of Insight classes ",
       description: "Get Skills! Stay Healthy",
       cta: "Join classes"
     },
@@ -30,6 +30,15 @@ const Hero = () => {
       title: "Expert Consultations",
       description: "Personalized wellness advice from our specialists",
       cta: "Book Now"
+    },
+    {
+    
+      id:4,
+      image:"https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753882847/people-office-work-day_1_ym2pr0.jpg",
+      Title:"Learn Natural Treaments with us",
+      description:"Join our classes",
+      cta:"Register Here"
+
     }
   ];
 

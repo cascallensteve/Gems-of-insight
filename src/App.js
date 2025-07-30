@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 
 import Navbar from './components/Navbar';
+import AppointmentModal from './components/AppointmentModal';
+import AdminLayout from './components/admin/AdminLayout';
 import Hero from './components/Hero';
 import FeatureBenefits from './components/FeatureBenefits';
 // import FeaturedServices from './components/FeaturedServices';
@@ -26,6 +28,7 @@ import ConsultationPage from './components/ConsultationPage';
 import ContactPage from './components/ContactPage';
 import Shop from './components/Shop';
 import Cart from './components/Cart';
+import CartPage from './components/CartPage';
 import ProductView from './components/ProductView';
 import QuickView from './components/QuickView';
 import CoursesPage from './components/CoursesPage';
@@ -53,9 +56,14 @@ function App() {
 }
 
 function AppContent() {
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+
   const handleOpenAppointmentModal = () => {
-    // Placeholder for appointment modal functionality
-    alert('Appointment booking feature coming soon!');
+    setIsAppointmentModalOpen(true);
+  };
+
+  const handleCloseAppointmentModal = () => {
+    setIsAppointmentModalOpen(false);
   };
 
   const handleOpenCart = () => {
@@ -103,17 +111,24 @@ function AppContent() {
           <Route path="/consultation" element={<ConsultationPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductView />} />
           <Route path="/quickview/:id" element={<QuickView />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/admin" element={<AdminLayout />} />
         </Routes>
 
       <WhatsAppFloat />
       <NewFooter />
+      
+      {/* Appointment Modal */}
+      <AppointmentModal 
+        isOpen={isAppointmentModalOpen}
+        onClose={handleCloseAppointmentModal}
+      />
     </>
   );
 }

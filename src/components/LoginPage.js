@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
+import '../styles/forms.css';
 // import apiService from '../services/api'; // Commented out as it's not used currently
 import { useAuth } from '../context/AuthContext';
 
@@ -375,106 +376,114 @@ const LoginPage = ({ onLogin, onClose }) => {
           )}
 
           <div className="login-form-section">
-            <div className="login-header">
-              <h2>{getFormTitle()}</h2>
-              <p className="login-subtitle">{getFormSubtitle()}</p>
+            <div className="form-header">
+              <h1>{getFormTitle()}</h1>
+              <p>{getFormSubtitle()}</p>
             </div>
 
             <form className="login-form" onSubmit={handleSubmit}>
               {/* Signup Fields */}
               {authMode === 'signup' && (
                 <>
-                  <div className="form-group">
+                  <div className="form-group half">
+                    <label>First Name</label>
                     <input
                       type="text"
                       name="firstName"
-                      placeholder="First Name"
+                      placeholder="Enter your first name"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className={errors.firstName ? 'error' : ''}
+                      className={`form-input ${errors.firstName ? 'error' : ''}`}
                       required
                     />
-                    {errors.firstName && <span className="error-text">{errors.firstName}</span>}
+                    {errors.firstName && <div className="error-message">{errors.firstName}</div>}
                   </div>
 
-                  <div className="form-group">
+                  <div className="form-group half">
+                    <label>Last Name</label>
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Last Name"
+                      placeholder="Enter your last name"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className={errors.lastName ? 'error' : ''}
+                      className={`form-input ${errors.lastName ? 'error' : ''}`}
                       required
                     />
-                    {errors.lastName && <span className="error-text">{errors.lastName}</span>}
+                    {errors.lastName && <div className="error-message">{errors.lastName}</div>}
                   </div>
                 </>
               )}
 
               {/* Email Field (for login, signup, forgot password) */}
               {authMode !== 'reset' && (
-                <div className="form-group">
+                <div className="form-group with-icon">
+                  <label>Email Address</label>
+                  <div className="form-icon">📧</div>
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="Enter your email address"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={errors.email ? 'error' : ''}
+                    className={`form-input ${errors.email ? 'error' : ''}`}
                     required
                   />
-                  {errors.email && <span className="error-text">{errors.email}</span>}
+                  {errors.email && <div className="error-message">{errors.email}</div>}
                 </div>
               )}
 
               {/* Password Field (for login, signup, reset) */}
               {authMode !== 'forgot' && (
-                <div className="form-group">
+                <div className="form-group with-icon">
+                  <label>Password</label>
+                  <div className="form-icon">🔒</div>
                   <input
                     type="password"
                     name="password"
-                    placeholder={authMode === 'reset' ? 'New Password' : 'Password'}
+                    placeholder={authMode === 'reset' ? 'Enter your new password' : 'Enter your password'}
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={errors.password ? 'error' : ''}
+                    className={`form-input ${errors.password ? 'error' : ''}`}
                     required
                   />
-                  {errors.password && <span className="error-text">{errors.password}</span>}
+                  {errors.password && <div className="error-message">{errors.password}</div>}
                 </div>
               )}
 
               {/* Confirm Password Field (for signup and reset) */}
               {(authMode === 'signup' || authMode === 'reset') && (
-                <div className="form-group">
+                <div className="form-group with-icon">
+                  <label>Confirm Password</label>
+                  <div className="form-icon">🔒</div>
                   <input
                     type="password"
                     name="confirmPassword"
-                    placeholder="Confirm Password"
+                    placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className={errors.confirmPassword ? 'error' : ''}
+                    className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
                     required
                   />
-                  {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+                  {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                 </div>
               )}
 
               {/* Terms Checkbox (for signup only) */}
               {authMode === 'signup' && (
                 <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="terms"
-                      checked={formData.terms}
-                      onChange={handleInputChange}
-                      className={errors.terms ? 'error' : ''}
-                    />
-                    <span className="checkmark"></span>
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    name="terms"
+                    checked={formData.terms}
+                    onChange={handleInputChange}
+                    className={errors.terms ? 'error' : ''}
+                  />
+                  <label htmlFor="terms">
                     I agree to the <button type="button" className="terms-link">Terms & Conditions</button>
                   </label>
-                  {errors.terms && <span className="error-text">{errors.terms}</span>}
+                  {errors.terms && <div className="error-message">{errors.terms}</div>}
                 </div>
               )}
 
@@ -492,26 +501,22 @@ const LoginPage = ({ onLogin, onClose }) => {
                 </div>
               )}
 
-              {errors.submit && <div className="error-text submit-error">{errors.submit}</div>}
+              {errors.submit && <div className="error-message submit-error">{errors.submit}</div>}
 
               <button 
                 type="submit" 
-                className="login-submit-btn" 
+                className={`form-button ${loading ? 'loading' : ''}`}
                 disabled={loading}
               >
-                {loading ? (
-                  <>
-                    <span className="spinner"></span> {getSubmitButtonText()}
-                  </>
-                ) : getSubmitButtonText()}
+                {getSubmitButtonText()}
               </button>
             </form>
 
             {/* Auth Mode Toggle Links */}
-            <div className="login-footer">
+            <div className="form-footer">
               {authMode === 'login' && (
                 <p>
-                  Don't have an account?
+                  Don't have an account? 
                   <button 
                     className="toggle-auth" 
                     onClick={() => switchAuthMode('signup')}
@@ -523,7 +528,7 @@ const LoginPage = ({ onLogin, onClose }) => {
 
               {authMode === 'signup' && (
                 <p>
-                  Already have an account?
+                  Already have an account? 
                   <button 
                     className="toggle-auth" 
                     onClick={() => switchAuthMode('login')}
@@ -535,7 +540,7 @@ const LoginPage = ({ onLogin, onClose }) => {
 
               {authMode === 'forgot' && (
                 <p>
-                  Remember your password?
+                  Remember your password? 
                   <button 
                     className="toggle-auth" 
                     onClick={() => switchAuthMode('login')}
@@ -547,7 +552,7 @@ const LoginPage = ({ onLogin, onClose }) => {
 
               {authMode === 'reset' && (
                 <p>
-                  Want to login instead?
+                  Want to login instead? 
                   <button 
                     className="toggle-auth" 
                     onClick={() => switchAuthMode('login')}

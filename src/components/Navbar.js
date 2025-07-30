@@ -214,6 +214,19 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
                     📦 My Orders
                   </button>
                 </li>
+                {(currentUser?.role === 'admin' || currentUser?.userType === 'admin') && (
+                  <li className="navbar-item mobile-only">
+                    <a 
+                      href="/admin" 
+                      className="navbar-link admin-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      🚀 Admin Panel
+                    </a>
+                  </li>
+                )}
                 <li className="navbar-item mobile-only">
                   <button className="navbar-link logout-link" onClick={handleLogout}>
                     🚪 Logout
@@ -256,6 +269,16 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
                   <div className="user-dropdown" onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => handleNavClick('/profile')}>Profile</button>
                     <button onClick={() => handleNavClick('/orders')}>My Orders</button>
+                    {(currentUser?.role === 'admin' || currentUser?.userType === 'admin') && (
+                      <a 
+                        href="/admin" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="admin-dropdown-link"
+                      >
+                        🚀 Admin Panel
+                      </a>
+                    )}
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}

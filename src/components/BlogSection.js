@@ -1,49 +1,126 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
+import { blogService } from '../services/blogService';
 import './BlogSection.css';
 
 const BlogSection = () => {
   const navigate = useNavigate();
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "10 Benefits of Organic Turmeric for Daily Wellness",
-      excerpt: "Discover how incorporating organic turmeric into your daily routine can boost immunity, reduce inflammation, and improve overall health.",
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
-      date: "January 15, 2025",
-      author: "Dr. Sarah Williams",
-      category: "Natural Remedies",
-      readTime: "5 min read"
-    },
-    {
-      id: 2,
-      title: "The Complete Guide to Natural Detox Methods",
-      excerpt: "Learn about gentle, effective ways to support your body's natural detoxification process using organic herbs and lifestyle changes.",
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
-      date: "January 12, 2025",
-      author: "Mark Johnson",
-      category: "Detox & Cleanse",
-      readTime: "8 min read"
-    },
-    {
-      id: 3,
-      title: "Building Immunity Naturally: A Holistic Approach",
-      excerpt: "Strengthen your immune system with proven natural methods, superfoods, and lifestyle practices that promote long-term health.",
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
-      date: "January 10, 2025",
-      author: "Dr. Emily Chen",
-      category: "Immunity",
-      readTime: "6 min read"
+  useEffect(() => {
+    fetchLatestBlogs();
+  }, []);
+
+  const fetchLatestBlogs = async () => {
+    try {
+      setLoading(true);
+      
+      // Check if user is authenticated before making API call
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        throw new Error('No authentication token found');
+      }
+      
+      const blogs = await blogService.getAllBlogs();
+      
+      // Ensure blogs is an array
+      if (!Array.isArray(blogs)) {
+        throw new Error('Invalid blogs data received');
+      }
+      
+      // Transform and get latest 3 blogs
+      const transformedBlogs = blogs
+        .slice(0, 3)
+        .map(blog => ({
+          id: blog.id || Math.random().toString(36),
+          title: blog.title || 'Untitled Post',
+          excerpt: blog.description || 'No description available',
+          image: getRandomImage(),
+          date: blogService.formatTimestamp(blog.timestamp),
+          author: blogService.getAuthorName(blog.author),
+          category: getCategoryFromTags(blog.tags || []),
+          readTime: blog.read_time || '5 min read'
+        }));
+      
+      setBlogPosts(transformedBlogs);
+    } catch (error) {
+      console.error('Error fetching latest blogs:', error);
+      // Fallback to default posts if API fails
+      setBlogPosts([
+        {
+          id: 1,
+          title: "10 Benefits of Organic Turmeric for Daily Wellness",
+          excerpt: "Discover how incorporating organic turmeric into your daily routine can boost immunity, reduce inflammation, and improve overall health.",
+          image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+          date: "January 15, 2025",
+          author: "Dr. Sarah Williams",
+          category: "Natural Remedies",
+          readTime: "5 min read"
+        },
+        {
+          id: 2,
+          title: "The Power of Mindful Eating",
+          excerpt: "Learn how mindful eating practices can transform your relationship with food and improve digestion.",
+          image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
+          date: "January 20, 2025",
+          author: "Nutritionist Jane Doe",
+          category: "Nutrition",
+          readTime: "7 min read"
+        },
+        {
+          id: 3,
+          title: "Natural Stress Relief Techniques",
+          excerpt: "Explore natural methods to manage stress and promote mental wellness in your daily life.",
+          image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
+          date: "January 25, 2025",
+          author: "Dr. Michael Chen",
+          category: "Mental Health",
+          readTime: "6 min read"
+        }
+      ]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getRandomImage = () => {
+    const images = [
+      "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
+      "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
+      "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg"
+    ];
+    return images[Math.floor(Math.random() * images.length)];
+  };
+
+  const getCategoryFromTags = (tags) => {
+    if (!tags || tags.length === 0) return 'Health & Wellness';
+    
+    const categoryMap = {
+      'nutrition': 'Nutrition',
+      'health': 'Health & Wellness',
+      'god': 'Spiritual Health',
+      'exercise': 'Fitness',
+      'water': 'Hydration',
+      'sunshine': 'Natural Living'
+    };
+    
+    for (let tag of tags) {
+      const category = categoryMap[tag.toLowerCase()];
+      if (category) return category;
+    }
+    
+    return 'Health & Wellness';
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -82,8 +159,13 @@ const BlogSection = () => {
           <p>Stay informed with our latest insights on natural health and wellness</p>
         </motion.div>
 
-        <motion.div className="blog-grid" variants={containerVariants}>
-          {blogPosts.map((post) => (
+        {loading ? (
+          <div className="blog-loading">
+            <p>Loading latest posts...</p>
+          </div>
+        ) : (
+          <motion.div className="blog-grid" variants={containerVariants}>
+            {blogPosts.map((post) => (
             <motion.article 
               key={post.id} 
               className="blog-card"
@@ -122,8 +204,9 @@ const BlogSection = () => {
                 </div>
               </div>
             </motion.article>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         <motion.div className="blog-cta" variants={itemVariants}>
           <button 
