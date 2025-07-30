@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import LazyLoad from 'react-lazyload';
 import './Shop.css';
 
 const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }) => {
@@ -279,7 +280,9 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
               {product.sale && <span className="sale-badge">Sale!</span>}
               
               <div className="product-image">
-                <img src={product.image} alt={product.name} />
+                <LazyLoad height={250} offset={100} placeholder={<div className="image-placeholder">Loading...</div>}>
+                  <img src={product.image} alt={product.name} />
+                </LazyLoad>
                 <div className="product-overlay">
                   <button 
                     className="quick-view-btn"

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './VerifyEmail.css';
 
 const EmailVerification = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [verificationCode, setVerificationCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -73,16 +75,25 @@ const EmailVerification = () => {
         throw new Error(data.detail || data.message || 'Verification failed');
       }
 
-      setSuccess('Email verified successfully! Redirecting...');
+      setSuccess('OTP verified successfully! Email confirmed. Redirecting...');
       localStorage.removeItem('justSignedUp');
 
-      if (data.user || data.token) {
-        localStorage.setItem('currentUser', JSON.stringify(data));
+      // If user just signed up, log them in automatically
+      if (justSignedUp && (data.user || data.token || data)) {
+        try {
+          // Use the AuthContext login method to properly set user data
+          const userData = data.user || data;
+          const token = data.token || data.access_token;
+          login(userData, token);
+        } catch (loginError) {
+          console.error('Error during auto-login:', loginError);
+        }
       }
 
       setTimeout(() => {
-        navigate(justSignedUp ? '/' : '/login');
-      }, 2000);
+        // Always redirect to home page after successful verification
+        navigate('/');
+      }, 1500);
 
     } catch (err) {
       console.error('Verification error:', err);
@@ -121,7 +132,7 @@ const EmailVerification = () => {
         throw new Error(data.detail || data.message || 'Failed to resend code');
       }
 
-      setSuccess('Verification code resent successfully!');
+      setSuccess('OTP code resent successfully! Check your email.');
       setTimeout(() => setSuccess(''), 3000);
 
     } catch (err) {
@@ -163,8 +174,8 @@ const EmailVerification = () => {
           />
         </div>
 
-        <h2>Verify Your Email</h2>
-        <p>We've sent a verification code to <strong>{email}</strong></p>
+        <h2>Verify Your Email with OTP</h2>
+        <p>We've sent a One-Time Password (OTP) to <strong>{email}</strong>. Please enter the 6-digit code below.</p>
 
         <form onSubmit={handleVerify}>
           <div className="form-group">
@@ -172,7 +183,7 @@ const EmailVerification = () => {
               type="text"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="Enter verification code"
+              placeholder="Enter 6-digit OTP code"
               className={error ? 'error' : ''}
               required
               maxLength="6"
@@ -183,20 +194,20 @@ const EmailVerification = () => {
           {success && <div className="success-message">{success}</div>}
 
           <button type="submit" disabled={loading || !verificationCode.trim()}>
-            {loading ? 'Verifying...' : 'Verify Email'}
+            {loading ? 'Verifying OTP...' : 'Verify OTP'}
           </button>
         </form>
 
         <div className="resend-section">
           <p className="resend-text">
-            Didn't receive a code?{' '}
+            Didn't receive the OTP?{' '}
             <button
               type="button"
               onClick={handleResendCode}
               disabled={loading}
               className="resend-button"
             >
-              {loading ? 'Sending...' : 'Resend Code'}
+              {loading ? 'Sending...' : 'Resend OTP'}
             </button>
           </p>
         </div>

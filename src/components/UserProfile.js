@@ -5,13 +5,18 @@ import './UserProfile.css';
 
 const UserProfile = () => {
   const { currentUser, updateUser, logout } = useAuth();
+  
+  // Debug: Log current user data to help troubleshoot
+  useEffect(() => {
+    console.log('Current user data in profile:', currentUser);
+  }, [currentUser]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: currentUser?.firstName || '',
-    lastName: currentUser?.lastName || '',
+    firstName: currentUser?.firstName || currentUser?.first_name || '',
+    lastName: currentUser?.lastName || currentUser?.last_name || '',
     email: currentUser?.email || '',
-    phone: currentUser?.phone || '',
-    dateOfBirth: currentUser?.dateOfBirth || '',
+    phone: currentUser?.phone || currentUser?.phone_number || '',
+    dateOfBirth: currentUser?.dateOfBirth || currentUser?.date_of_birth || '',
     gender: currentUser?.gender || '',
     address: currentUser?.address || '',
     city: currentUser?.city || '',
@@ -93,11 +98,11 @@ const UserProfile = () => {
 
   const handleCancel = () => {
     setFormData({
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
+      firstName: currentUser?.firstName || currentUser?.first_name || '',
+      lastName: currentUser?.lastName || currentUser?.last_name || '',
       email: currentUser?.email || '',
-      phone: currentUser?.phone || '',
-      dateOfBirth: currentUser?.dateOfBirth || '',
+      phone: currentUser?.phone || currentUser?.phone_number || '',
+      dateOfBirth: currentUser?.dateOfBirth || currentUser?.date_of_birth || '',
       gender: currentUser?.gender || '',
       address: currentUser?.address || '',
       city: currentUser?.city || '',
@@ -293,7 +298,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{currentUser?.lastName || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.lastName || currentUser?.last_name || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -319,7 +324,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{currentUser?.phone || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.phone || currentUser?.phone_number || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -332,7 +337,7 @@ const UserProfile = () => {
                       onChange={handleInputChange}
                     />
                   ) : (
-                    <div className="form-value">{currentUser?.dateOfBirth || 'Not provided'}</div>
+                    <div className="form-value">{currentUser?.dateOfBirth || currentUser?.date_of_birth || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="form-group">

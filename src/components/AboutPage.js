@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import './AboutPage.css';
 
 const AboutPage = () => {
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    message: '',
+    honeypot: ''
+  });
+
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [registrationData, setRegistrationData] = useState({
     firstName: '',
     otherNames: '',
     gender: '',
@@ -20,82 +32,85 @@ const AboutPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [showForm, setShowForm] = useState(false);
 
-  const handleInputChange = (e) => {
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  // Intersection observer hooks
+  const [heroRef, heroInView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [aboutRef, aboutInView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [statsRef, statsInView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [contactRef, contactInView] = useInView({ threshold: 0.1, triggerOnce: true });
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    
+    if (formData.honeypot) return; // Spam protection
+
+    const mailtoLink = `mailto:info@gemsofinsight.com?subject=Contact from ${formData.firstName} ${formData.lastName}&body=Name: ${formData.firstName} ${formData.lastName}%0AEmail: ${formData.email}%0APhone: ${formData.phone}%0A%0AMessage:%0A${formData.message}`;
+    window.location.href = mailtoLink;
+  };
+
+  const handleRegistrationChange = (e) => {
     const { name, value, type, checked } = e.target;
     
     if (name === 'selectedModules') {
-      setFormData(prev => ({
+      setRegistrationData(prev => ({
         ...prev,
         selectedModules: checked 
           ? [...prev.selectedModules, value]
           : prev.selectedModules.filter(module => module !== value)
       }));
     } else {
-      setFormData(prev => ({
+      setRegistrationData(prev => ({
         ...prev,
         [name]: value
       }));
     }
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.gender) newErrors.gender = 'Gender is required';
-    if (!formData.yearOfBirth) newErrors.yearOfBirth = 'Year of birth is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required';
-    if (!formData.homeAddress) newErrors.homeAddress = 'Home address is required';
-    if (!formData.city) newErrors.city = 'City is required';
-    if (!formData.country) newErrors.country = 'Country is required';
-    if (formData.selectedModules.length === 0) {
-      newErrors.selectedModules = 'Please select at least one module';
-    }
-
-    return newErrors;
-  };
-
-  const handleSubmit = (e) => {
+  const handleRegistrationSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
     
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    // Generate email content
     const emailContent = `
       GOSPEL MEDICAL MISSIONARY EVANGELISM TRAINING - REGISTRATION FORM
       
       PERSONAL DETAILS:
-      First Name: ${formData.firstName}
-      Other Names: ${formData.otherNames}
-      Gender: ${formData.gender}
-      Year of Birth: ${formData.yearOfBirth}
-      Email: ${formData.email}
-      Phone Number: ${formData.phoneNumber}
-      Other Number: ${formData.otherNumber}
-      Home Address: ${formData.homeAddress}
-      City: ${formData.city}
-      Country: ${formData.country}
-      Religion: ${formData.religion}
-      Church: ${formData.church}
-      Duration of Membership: ${formData.membershipDuration}
+      First Name: ${registrationData.firstName}
+      Other Names: ${registrationData.otherNames}
+      Gender: ${registrationData.gender}
+      Year of Birth: ${registrationData.yearOfBirth}
+      Email: ${registrationData.email}
+      Phone Number: ${registrationData.phoneNumber}
+      Other Number: ${registrationData.otherNumber}
+      Home Address: ${registrationData.homeAddress}
+      City: ${registrationData.city}
+      Country: ${registrationData.country}
+      Religion: ${registrationData.religion}
+      Church: ${registrationData.church}
+      Duration of Membership: ${registrationData.membershipDuration}
       
       SELECTED MODULES:
-      ${formData.selectedModules.join(', ')}
+      ${registrationData.selectedModules.join(', ')}
     `;
 
-    // Create mailto link
     const mailtoLink = `mailto:applications@gemsofinsight.com?subject=Medical Missionary Training Registration&body=${encodeURIComponent(emailContent)}`;
     window.location.href = mailtoLink;
 
@@ -103,123 +118,347 @@ const AboutPage = () => {
   };
 
   return (
-    <div className="about-page">
+    <div className="about-page-organic">
       {/* Hero Section */}
-      <section className="about-hero">
-        <div className="hero-content">
-          <div className="hero-text">
-            <h1>About Gems of Insight</h1>
-            <p>Empowering communities through natural health education and holistic wellness solutions</p>
-          </div>
-          <div className="hero-image">
-            <img 
-              src="https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg" 
-              alt="Natural Health"
-            />
+      <motion.section 
+        ref={heroRef}
+        className="about-hero-section"
+        initial="hidden"
+        animate={heroInView ? "visible" : "hidden"}
+        variants={fadeInUp}
+      >
+        <div className="hero-background">
+          <div className="hero-overlay"></div>
+          <img 
+            src="https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg" 
+            alt="Organic Health"
+          />
+        </div>
+        <div className="container">
+          <div className="hero-content">
+            <motion.h1 variants={fadeInUp}>We Are The Leader In Organic Health</motion.h1>
+            <motion.p variants={fadeInUp}>
+              Empowering communities through natural health education, quality organic products, 
+              and holistic wellness solutions that transform lives and restore vitality.
+            </motion.p>
+            <motion.div className="hero-buttons" variants={fadeInUp}>
+              <button className="btn-primary">Discover Our Story</button>
+              <button className="btn-secondary">View Products</button>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Mission Section */}
-      <section className="mission-section">
+      {/* About Lupinus Group Section */}
+      <motion.section 
+        ref={aboutRef}
+        className="about-content-section"
+        initial="hidden"
+        animate={aboutInView ? "visible" : "hidden"}
+        variants={staggerContainer}
+      >
         <div className="container">
-          <div className="mission-content">
-            <div className="mission-text">
-              <h2>Our Mission</h2>
+          <div className="about-grid">
+            <motion.div className="about-text" variants={fadeInUp}>
+              <h2>About Gems of Insight</h2>
               <p>
-                At Gems of Insight, we are dedicated to promoting natural health and wellness through 
-                education, quality products, and community support. We believe in the power of nature 
-                to heal and restore, combining traditional wisdom with modern understanding.
+                At Gems of Insight, we believe in the transformative power of natural health and wellness. 
+                Our journey began with a simple mission: to provide communities with access to quality 
+                organic products, comprehensive health education, and the wisdom needed to make informed 
+                decisions about their wellbeing.
               </p>
-              <div className="mission-values">
-                <div className="value-item">
-                  <h3>🌿 Natural Healing</h3>
-                  <p>Promoting the use of natural remedies and holistic approaches to health</p>
-                </div>
-                <div className="value-item">
-                  <h3>📚 Education</h3>
-                  <p>Empowering individuals with knowledge to make informed health decisions</p>
-                </div>
-                <div className="value-item">
-                  <h3>🤝 Community</h3>
-                  <p>Building a supportive network of health-conscious individuals and families</p>
-                </div>
-              </div>
-            </div>
-            <div className="mission-image">
+              <p>
+                We combine traditional healing wisdom with modern understanding, offering a holistic 
+                approach to health that addresses not just symptoms, but the root causes of wellness 
+                challenges. Our team of dedicated professionals is committed to serving with excellence, 
+                integrity, and genuine care for every individual we encounter.
+              </p>
+            </motion.div>
+            <motion.div className="about-image" variants={fadeInUp}>
               <img 
-                src="https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg" 
-                alt="Our Mission"
+                src="https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg"
+                alt="Natural Health Products"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Medical Missionary Section */}
-      <section className="medical-missionary-section">
+      {/* Stats Counter Section */}
+      <motion.section 
+        ref={statsRef}
+        className="stats-section"
+        initial="hidden"
+        animate={statsInView ? "visible" : "hidden"}
+        variants={staggerContainer}
+      >
         <div className="container">
-          <div className="section-header">
-            <h2>Join Medical Missionary Classes</h2>
-            <p>Gospel Medical Missionary Evangelism Training</p>
+          <div className="stats-grid">
+            <motion.div className="stat-item" variants={fadeInUp}>
+              <h3>500+</h3>
+              <p>Happy Customers</p>
+            </motion.div>
+            <motion.div className="stat-item" variants={fadeInUp}>
+              <h3>50+</h3>
+              <p>Natural Products</p>
+            </motion.div>
+            <motion.div className="stat-item" variants={fadeInUp}>
+              <h3>15+</h3>
+              <p>Years Experience</p>
+            </motion.div>
+            <motion.div className="stat-item" variants={fadeInUp}>
+              <h3>100+</h3>
+              <p>Health Consultations</p>
+            </motion.div>
           </div>
+        </div>
+      </motion.section>
 
-          <div className="missionary-content">
-            <div className="missionary-quote">
+      {/* Medical Missionary Training Section */}
+      <motion.section 
+        className="training-section"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        <div className="container">
+          <motion.div className="section-header text-center" variants={fadeInUp}>
+            <h2>Gospel Medical Missionary Training</h2>
+            <p>Equipping individuals with the knowledge and skills to serve others through natural health ministry</p>
+          </motion.div>
+
+          <motion.div className="training-content" variants={fadeInUp}>
+            <div className="training-quote">
               <blockquote>
                 "Medical missionary work brings to humanity the gospel of release from suffering. 
-                It is the pioneer work of the gospel. It is the gospel practiced, the compassion of Christ revealed. 
-                Of this work there is great need, and the world is open for it. God grant that the importance of 
-                medical missionary work shall be understood, and that new fields may be immediately entered. 
-                Then will the work of the ministry be after the Lord's order; the sick will be healed, 
-                and poor, suffering humanity will be blessed."
+                It is the pioneer work of the gospel. It is the gospel practiced, the compassion of Christ revealed."
               </blockquote>
               <cite>- MM 239.3</cite>
             </div>
 
-            <div className="training-modules">
-              <h3>Levels of Training</h3>
+            <div className="modules-section">
+              <h3>Training Modules</h3>
               <div className="modules-grid">
-                <div className="module-card">
-                  <h4>Module One</h4>
-                  <h5>Essentials of Applied Clinical Nutrition</h5>
+                <motion.div className="module-card" variants={fadeInUp}>
+                  <div className="module-header">
+                    <span className="module-number">01</span>
+                    <h4>Essentials of Applied Clinical Nutrition</h4>
+                  </div>
                   <div className="module-details">
                     <span className="duration">1 Month</span>
                     <span className="price">KSh 10,000</span>
                   </div>
-                </div>
+                  <p>Foundation principles of nutrition and therapeutic dietary approaches</p>
+                </motion.div>
                 
-                <div className="module-card">
-                  <h4>Module Two</h4>
-                  <h5>Fundamentals of Human Anatomy, Physiology & Clinical Pathology</h5>
+                <motion.div className="module-card" variants={fadeInUp}>
+                  <div className="module-header">
+                    <span className="module-number">02</span>
+                    <h4>Human Anatomy, Physiology & Clinical Pathology</h4>
+                  </div>
                   <div className="module-details">
                     <span className="duration">4 Months</span>
                     <span className="price">KSh 30,000</span>
                   </div>
-                </div>
+                  <p>Comprehensive understanding of human body systems and disease processes</p>
+                </motion.div>
                 
-                <div className="module-card">
-                  <h4>Module Three</h4>
-                  <h5>Herbology and Botanical Medicine</h5>
+                <motion.div className="module-card" variants={fadeInUp}>
+                  <div className="module-header">
+                    <span className="module-number">03</span>
+                    <h4>Herbology and Botanical Medicine</h4>
+                  </div>
                   <div className="module-details">
                     <span className="duration">2 Months</span>
                     <span className="price">KSh 20,000</span>
                   </div>
-                </div>
+                  <p>Traditional and modern applications of medicinal plants and herbs</p>
+                </motion.div>
               </div>
               
-              <div className="total-cost">
-                <strong>Total Cost: KSh 60,000</strong>
+              <div className="total-investment">
+                <h4>Total Investment: KSh 60,000</h4>
               </div>
             </div>
 
-            <div className="payment-methods">
+            <motion.div className="registration-cta" variants={fadeInUp}>
+              <button 
+                className="btn-primary btn-large"
+                onClick={() => setShowRegistrationForm(!showRegistrationForm)}
+              >
+                {showRegistrationForm ? 'Hide Registration Form' : 'Start Your Journey Today'}
+              </button>
+            </motion.div>
+
+            {showRegistrationForm && (
+              <motion.div 
+                className="registration-form-section"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.5 }}
+              >
+                <h3>Registration Form</h3>
+                <form onSubmit={handleRegistrationSubmit} className="registration-form">
+                  <div className="form-section">
+                    <h4>Personal Information</h4>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>First Name *</label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={registrationData.firstName}
+                          onChange={handleRegistrationChange}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label>Other Names</label>
+                        <input
+                          type="text"
+                          name="otherNames"
+                          value={registrationData.otherNames}
+                          onChange={handleRegistrationChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Gender *</label>
+                        <select
+                          name="gender"
+                          value={registrationData.gender}
+                          onChange={handleRegistrationChange}
+                          required
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                        </select>
+                      </div>
+                      
+                      <div className="form-group">
+                        <label>Year of Birth *</label>
+                        <input
+                          type="number"
+                          name="yearOfBirth"
+                          value={registrationData.yearOfBirth}
+                          onChange={handleRegistrationChange}
+                          min="1920"
+                          max="2010"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Email Address *</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={registrationData.email}
+                          onChange={handleRegistrationChange}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label>Phone Number *</label>
+                        <input
+                          type="tel"
+                          name="phoneNumber"
+                          value={registrationData.phoneNumber}
+                          onChange={handleRegistrationChange}
+                          placeholder="+254..."
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>City *</label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={registrationData.city}
+                          onChange={handleRegistrationChange}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label>Country *</label>
+                        <input
+                          type="text"
+                          name="country"
+                          value={registrationData.country}
+                          onChange={handleRegistrationChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-section">
+                    <h4>Select Modules of Interest *</h4>
+                    <div className="module-selection">
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="selectedModules"
+                          value="Module One - Essentials of Applied Clinical Nutrition"
+                          checked={registrationData.selectedModules.includes('Module One - Essentials of Applied Clinical Nutrition')}
+                          onChange={handleRegistrationChange}
+                        />
+                        <span className="checkmark"></span>
+                        Module One - Essentials of Applied Clinical Nutrition (KSh 10,000)
+                      </label>
+                      
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="selectedModules"
+                          value="Module Two - Fundamentals of Human Anatomy, Physiology & Clinical Pathology"
+                          checked={registrationData.selectedModules.includes('Module Two - Fundamentals of Human Anatomy, Physiology & Clinical Pathology')}
+                          onChange={handleRegistrationChange}
+                        />
+                        <span className="checkmark"></span>
+                        Module Two - Human Anatomy, Physiology & Clinical Pathology (KSh 30,000)
+                      </label>
+                      
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="selectedModules"
+                          value="Module Three - Herbology and Botanical Medicine"
+                          checked={registrationData.selectedModules.includes('Module Three - Herbology and Botanical Medicine')}
+                          onChange={handleRegistrationChange}
+                        />
+                        <span className="checkmark"></span>
+                        Module Three - Herbology and Botanical Medicine (KSh 20,000)
+                      </label>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="btn-primary btn-large">
+                    Submit Registration
+                  </button>
+                </form>
+              </motion.div>
+            )}
+
+            <div className="payment-info">
               <h3>Payment Methods</h3>
-              <div className="payment-options">
+              <div className="payment-grid">
                 <div className="payment-option">
                   <h4>Lipa Na M-Pesa Paybill</h4>
                   <p><strong>Business No:</strong> 247247</p>
-                  <p><strong>Account No:</strong> 901 858 076 15</p>
+                  <p><strong>Account No:</strong> 00 901 858 076 15</p>
                 </div>
                 <div className="payment-option">
                   <h4>M-Pesa Send Money</h4>
@@ -227,259 +466,116 @@ const AboutPage = () => {
                 </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+      </motion.section>
 
-            <div className="registration-section">
-              <button 
-                className="register-btn"
-                onClick={() => setShowForm(!showForm)}
-              >
-                {showForm ? 'Hide Registration Form' : 'Show Registration Form'}
-              </button>
+      {/* Get In Touch Section */}
+      <motion.section 
+        ref={contactRef}
+        className="contact-section"
+        initial="hidden"
+        animate={contactInView ? "visible" : "hidden"}
+        variants={staggerContainer}
+      >
+        <div className="container">
+          <div className="contact-grid">
+            <motion.div className="contact-info" variants={fadeInUp}>
+              <h2>Get In Touch</h2>
+              <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+              
+              <div className="contact-details">
+                <div className="contact-item">
+                  <h4>Our Phone</h4>
+                  <p>+254 794 491 920</p>
+                  <p>+254 702 123 456</p>
+                </div>
+                <div className="contact-item">
+                  <h4>Email Address</h4>
+                  <p>info@gemsofinsight.com</p>
+                  <p>applications@gemsofinsight.com</p>
+                </div>
+                <div className="contact-item">
+                  <h4>Office Address</h4>
+                  <p>Nairobi, Kenya</p>
+                  <p>Available for consultations</p>
+                </div>
+              </div>
+            </motion.div>
 
-              {showForm && (
-                <div className="registration-form-container">
-                  <h3>Registration Form</h3>
-                  <form onSubmit={handleSubmit} className="registration-form">
-                    <div className="form-section">
-                      <h4>Personal Details</h4>
-                      
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>First Name *</label>
-                          <input
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            className={errors.firstName ? 'error' : ''}
-                          />
-                          {errors.firstName && <span className="error-text">{errors.firstName}</span>}
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Other Names</label>
-                          <input
-                            type="text"
-                            name="otherNames"
-                            value={formData.otherNames}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Gender *</label>
-                          <select
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleInputChange}
-                            className={errors.gender ? 'error' : ''}
-                          >
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                          </select>
-                          {errors.gender && <span className="error-text">{errors.gender}</span>}
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Year of Birth *</label>
-                          <input
-                            type="number"
-                            name="yearOfBirth"
-                            value={formData.yearOfBirth}
-                            onChange={handleInputChange}
-                            min="1920"
-                            max="2010"
-                            className={errors.yearOfBirth ? 'error' : ''}
-                          />
-                          {errors.yearOfBirth && <span className="error-text">{errors.yearOfBirth}</span>}
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Email Address *</label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className={errors.email ? 'error' : ''}
-                          />
-                          {errors.email && <span className="error-text">{errors.email}</span>}
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Phone Number *</label>
-                          <input
-                            type="tel"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleInputChange}
-                            placeholder="+254..."
-                            className={errors.phoneNumber ? 'error' : ''}
-                          />
-                          {errors.phoneNumber && <span className="error-text">{errors.phoneNumber}</span>}
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Other Number</label>
-                          <input
-                            type="tel"
-                            name="otherNumber"
-                            value={formData.otherNumber}
-                            onChange={handleInputChange}
-                            placeholder="+254..."
-                          />
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Home Address *</label>
-                          <input
-                            type="text"
-                            name="homeAddress"
-                            value={formData.homeAddress}
-                            onChange={handleInputChange}
-                            className={errors.homeAddress ? 'error' : ''}
-                          />
-                          {errors.homeAddress && <span className="error-text">{errors.homeAddress}</span>}
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>City *</label>
-                          <input
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            className={errors.city ? 'error' : ''}
-                          />
-                          {errors.city && <span className="error-text">{errors.city}</span>}
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Country *</label>
-                          <input
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            className={errors.country ? 'error' : ''}
-                          />
-                          {errors.country && <span className="error-text">{errors.country}</span>}
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Religion</label>
-                          <input
-                            type="text"
-                            name="religion"
-                            value={formData.religion}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        
-                        <div className="form-group">
-                          <label>Church</label>
-                          <input
-                            type="text"
-                            name="church"
-                            value={formData.church}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group">
-                        <label>Duration of Membership</label>
-                        <input
-                          type="text"
-                          name="membershipDuration"
-                          value={formData.membershipDuration}
-                          onChange={handleInputChange}
-                          placeholder="e.g., 5 years"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-section">
-                      <h4>Select Module of Interest *</h4>
-                      <div className="module-selection">
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            name="selectedModules"
-                            value="Module One - Essentials of Applied Clinical Nutrition"
-                            checked={formData.selectedModules.includes('Module One - Essentials of Applied Clinical Nutrition')}
-                            onChange={handleInputChange}
-                          />
-                          <span className="checkmark"></span>
-                          Module One - Essentials of Applied Clinical Nutrition (KSh 10,000)
-                        </label>
-                        
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            name="selectedModules"
-                            value="Module Two - Fundamentals of Human Anatomy, Physiology & Clinical Pathology"
-                            checked={formData.selectedModules.includes('Module Two - Fundamentals of Human Anatomy, Physiology & Clinical Pathology')}
-                            onChange={handleInputChange}
-                          />
-                          <span className="checkmark"></span>
-                          Module Two - Fundamentals of Human Anatomy, Physiology & Clinical Pathology (KSh 30,000)
-                        </label>
-                        
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            name="selectedModules"
-                            value="Module Three - Herbology and Botanical Medicine"
-                            checked={formData.selectedModules.includes('Module Three - Herbology and Botanical Medicine')}
-                            onChange={handleInputChange}
-                          />
-                          <span className="checkmark"></span>
-                          Module Three - Herbology and Botanical Medicine (KSh 20,000)
-                        </label>
-                      </div>
-                      {errors.selectedModules && <span className="error-text">{errors.selectedModules}</span>}
-                    </div>
-
-                    <button type="submit" className="submit-btn">
-                      Submit Registration
-                    </button>
-                  </form>
-
-                  <div className="form-notes">
-                    <h4>Notes:</h4>
-                    <ul>
-                      <li>Once this form is fully completed, email it to <strong>applications@gemsofinsight.com</strong></li>
-                      <li>A non-refundable registration fee of <strong>KSh 1,500</strong> should be sent immediately after submitting the form</li>
-                      <li>A certificate will be issued upon receipt and evaluation of all completed assignments</li>
-                    </ul>
+            <motion.div className="contact-form" variants={fadeInUp}>
+              <form onSubmit={handleContactSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>First Name</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Last Name</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                      required
+                    />
                   </div>
                 </div>
-              )}
-            </div>
-
-            <div className="contact-info">
-              <h3>Contact Information</h3>
-              <div className="contact-details">
-                <p>📞 0794491920</p>
-                <p>✉️ info@gemsofinsight.com</p>
-                <p>🌐 www.gemsofinsight.com</p>
-              </div>
-            </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Message</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    rows="5"
+                    required
+                  ></textarea>
+                </div>
+                
+                {/* Honeypot field for spam protection */}
+                <input
+                  type="text"
+                  name="honeypot"
+                  value={formData.honeypot}
+                  onChange={(e) => setFormData({...formData, honeypot: e.target.value})}
+                  style={{ display: 'none' }}
+                  tabIndex="-1"
+                  autoComplete="off"
+                />
+                
+                <button type="submit" className="btn-primary btn-large">
+                  Send Message
+                </button>
+              </form>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 };

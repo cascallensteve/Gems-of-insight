@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LazyLoad from 'react-lazyload';
 import './Hero.css';
 
 const Hero = () => {
@@ -18,10 +19,10 @@ const Hero = () => {
     },
     {
       id: 2,
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
-      title: "Fresh Ingredients",
-      description: "Direct from nature to your doorstep",
-      cta: "Explore"
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753870920/background_wam447.webp",
+      title: "Gesms of Insight classes ",
+      description: "Get Skills! Stay Healthy",
+      cta: "Join classes"
     },
     {
       id: 3,
@@ -113,7 +114,9 @@ const Hero = () => {
               className={`carousel-slide ${currentSlide === index ? 'active' : ''}`}
             >
               <div className="slide-image-container">
-                <img src={slide.image} alt={slide.title} className="slide-image" />
+                <LazyLoad height={500} offset={200} placeholder={<div className="hero-image-placeholder">Loading...</div>}>
+                  <img src={slide.image} alt={slide.title} className="slide-image" />
+                </LazyLoad>
                 <div className="slide-overlay">
                   <div className="slide-content">
                     <h2 className="slide-title">{slide.title}</h2>

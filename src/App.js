@@ -8,6 +8,13 @@ import Hero from './components/Hero';
 import FeatureBenefits from './components/FeatureBenefits';
 // import FeaturedServices from './components/FeaturedServices';
 import NewArrivals from './components/NewArrivals';
+import PromotionalBanners from './components/PromotionalBanners';
+import BestSellers from './components/BestSellers';
+import BlackFridayBanner from './components/BlackFridayBanner';
+import TrendingProducts from './components/TrendingProducts';
+import DealOfTheWeek from './components/DealOfTheWeek';
+import BlogSection from './components/BlogSection';
+import Newsletter from './components/Newsletter';
 
 import BlogPage from './components/BlogPage';
 import LoginPage from './components/LoginPage';
@@ -31,6 +38,7 @@ import NewFooter from './components/NewFooter';
 import VerifyEmailPage from './components/VerifyEmailPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
+import AboutPage from './components/AboutPage';
 
 import './App.css';
 
@@ -70,6 +78,13 @@ function AppContent() {
                 <FeatureBenefits />
                 {/* <FeaturedServices /> */}
                 <NewArrivals />
+                <PromotionalBanners />
+                <BestSellers />
+                <BlackFridayBanner />
+                <TrendingProducts />
+                <DealOfTheWeek />
+                <BlogSection />
+                <Newsletter />
               </>
             }
           />
@@ -94,6 +109,7 @@ function AppContent() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
 
       <WhatsAppFloat />

@@ -19,10 +19,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadUser = () => {
       try {
-        const token = apiService.getAuthToken();
         const userData = apiService.getUserData();
         
-        if (token && userData) {
+        if (userData) {
           setCurrentUser(userData);
         }
       } catch (error) {

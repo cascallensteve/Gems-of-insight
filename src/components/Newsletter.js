@@ -1,30 +1,57 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import './Newsletter.css';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
+
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Spam protection
+    if (honeypot) return;
+    
     if (email) {
       // In a real app, this would make an API call
       console.log('Newsletter subscription:', email);
       setSubscribed(true);
       setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
+      setTimeout(() => setSubscribed(false), 5000);
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8 }
     }
   };
 
   return (
-    <section className="newsletter">
+    <motion.section 
+      ref={ref}
+      className="newsletter"
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
       <div className="newsletter-container">
         <div className="newsletter-content">
           <div className="newsletter-text">
             <h2 className="newsletter-title">Get Discount 30% Off</h2>
             <p className="newsletter-subtitle">
-              Subscribe to our newsletter and receive exclusive discounts, 
-              natural health tips, and early access to new remedies.
+              It is a long established fact that a reader will be distracted by the readable 
+              content of natural health tips, exclusive offers, and wellness insights delivered to your inbox.
             </p>
             <div className="newsletter-benefits">
               <div className="benefit-item">
@@ -61,11 +88,23 @@ const Newsletter = () => {
                     required
                   />
                   <button type="submit" className="newsletter-submit">
-                    Get 30% Off
+                  Get 30% Off
                   </button>
-                </div>
+                  </div>
+                  
+                  {/* Honeypot field for spam protection */}
+                  <input
+                  type="text"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  style={{ display: 'none' }}
+                  tabIndex="-1"
+                  autoComplete="off"
+                  aria-label="Leave this field empty if you're human"
+                />
+                
                 <p className="newsletter-privacy">
-                  We respect your privacy. Unsubscribe at any time.
+                  Leave this field empty if you're human: We respect your privacy. Unsubscribe at any time.
                 </p>
               </form>
             )}
@@ -78,7 +117,7 @@ const Newsletter = () => {
           <div className="decoration decoration-3"></div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import LazyLoad from 'react-lazyload';
 import './NewArrivals.css';
 
 const NewArrivals = ({ onNavigateToShop }) => {
@@ -37,10 +38,10 @@ const NewArrivals = ({ onNavigateToShop }) => {
     },
     {
       id: 3,
-      name: "Raw Manuka Honey - Pure Gold",
-      price: "KSh 3,200",
-      originalPrice: "KSh 4,200",
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753346939/young-woman-with-curly-hair-sitting-cafe_pbym6j.jpg",
+      name: "Capsules - Pure ",
+      price: "KSh 500",
+      originalPrice: "KSh 1,200",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753871838/capsules_twqx2t.webp",
       description: "Genuine Manuka honey with MGO 400+. Natural antibacterial properties, supports digestive health, and boosts immune system effectively.",
       badge: "🍯 Premium",
       rating: 4.7,
@@ -159,7 +160,9 @@ const NewArrivals = ({ onNavigateToShop }) => {
           <div key={product.id} className="product-card">
             {/* Product Image */}
             <div className="product-image">
-              <img src={product.image} alt={product.name} />
+              <LazyLoad height={200} offset={100} placeholder={<div className="image-placeholder">Loading...</div>}>
+                <img src={product.image} alt={product.name} />
+              </LazyLoad>
               
               {/* Product Badge - Only if sale */}
               {product.originalPrice && (
@@ -236,7 +239,9 @@ const NewArrivals = ({ onNavigateToShop }) => {
           <div className="product-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal" onClick={closeProductView}>×</button>
             <div className="modal-content">
-              <img src={selectedProduct.image} alt={selectedProduct.name} />
+              <LazyLoad height={300} offset={50}>
+                <img src={selectedProduct.image} alt={selectedProduct.name} />
+              </LazyLoad>
               <div className="modal-info">
                 <h3>{selectedProduct.name}</h3>
                 <p className="modal-price">{selectedProduct.price}</p>

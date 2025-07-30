@@ -1,9 +1,9 @@
 import React from 'react';
 import './NewFooter.css';
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
-import { MdLocalShipping, MdPayment, MdSupportAgent, MdEco } from 'react-icons/md';
+import { MdLocalShipping, MdSupportAgent, MdEco } from 'react-icons/md';
 import { BsShieldLock, BsTelephone, BsEnvelope } from 'react-icons/bs';
-import { FaCcVisa, FaCcMastercard, FaCcPaypal, FaCcApplePay } from 'react-icons/fa';
+
 
 const NewFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -92,7 +92,7 @@ const NewFooter = () => {
             <div className="contact-info">
               <div className="contact-item">
                 <BsTelephone className="icon" />
-                <span>+1 (555) 123-4567</span>
+                <span>+254 794 491 920</span>
               </div>
               <div className="contact-item">
                 <BsEnvelope className="icon" />
@@ -115,14 +115,6 @@ By using this site, you agree to these terms. If you do not agree, please discon
         <div className="footer-bottom">
           <div className="footer-bottom-left">
             <p>&copy; {currentYear} GemsOfInsight. All rights reserved.</p>
-          </div>
-          <div className="footer-bottom-center">
-            <div className="payment-methods">
-              <FaCcVisa className="payment-icon" />
-              <FaCcMastercard className="payment-icon" />
-              <FaCcPaypal className="payment-icon" />
-              <FaCcApplePay className="payment-icon" />
-            </div>
           </div>
           <div className="footer-bottom-right">
             <a href="#privacy">Privacy Policy</a>

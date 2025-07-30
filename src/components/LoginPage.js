@@ -198,21 +198,21 @@ const LoginPage = ({ onLogin, onClose }) => {
         case 'login':
           // Use AuthContext login function
           login(data, data.token || data.access_token);
-          showSuccessMessage(`Welcome back! Login successful.`);
+          showSuccessMessage(`Welcome back! Redirecting to home page...`);
           
           setTimeout(() => {
             if (onLogin) onLogin(data);
             if (onClose) onClose();
             else {
-              // Force page reload to ensure state updates
+              // Direct redirect to home page
               window.location.href = '/';
             }
-          }, 1500);
+          }, 1000);
           break;
 
         case 'signup':
           localStorage.setItem('justSignedUp', 'true');
-          showSuccessMessage('Account created successfully! Please check your email for verification.');
+          showSuccessMessage('Account created successfully! OTP sent to your email for verification.');
           
           setTimeout(() => {
             window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}`;
