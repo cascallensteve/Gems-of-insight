@@ -3,11 +3,417 @@ import { useCart } from '../context/CartContext';
 import LazyLoad from 'react-lazyload';
 import './Shop.css';
 
-const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }) => {
+const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
   const { addToCart } = useCart();
-  const [filteredProducts, setFilteredProducts] = useState(allProducts || []);
+  const [cartNotification, setCartNotification] = useState({ show: false, productName: '' });
+
+  // Complete product catalog with 12 items
+  const allProducts = [
+    {
+      id: 1,
+      name: "Premium Organic Green Tea Collection",
+      price: "2,499",
+      originalPrice: "3,499",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Tea Blends",
+      subCategory: "Green Tea",
+      description: "Hand-picked organic green tea leaves from high-altitude gardens. Rich in antioxidants.",
+      benefits: ["Immune Boosting", "Energy Boosting"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    {
+      id: 2,
+      name: "Himalayan Herbal Wellness Mix",
+      price: "1,850",
+      originalPrice: "2,500",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Herbs & Spices",
+      subCategory: "Medicinal Herbs",
+      description: "Ancient Himalayan blend of 12 powerful herbs. Boosts immunity and reduces stress.",
+      benefits: ["Immune Boosting", "Stress and Anxiety"],
+      sale: true,
+      rating: 4.9,
+      inStock: true
+    },
+    {
+      id: 3,
+      name: "Pure Turmeric Capsules",
+      price: "1,299",
+      originalPrice: "1,799",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      category: "Extracts",
+      subCategory: "Capsules",
+      description: "High-potency turmeric capsules with curcumin for anti-inflammatory support.",
+      benefits: ["Blood cleansers", "Immune Boosting"],
+      sale: true,
+      rating: 4.7,
+      inStock: true
+    },
+    {
+      id: 4,
+      name: "Organic Ashwagandha Powder",
+      price: "1,650",
+      originalPrice: "2,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Supplements",
+      subCategory: "Herbal",
+      description: "Premium ashwagandha root powder for stress relief and energy enhancement.",
+      benefits: ["Stress and Anxiety", "Energy Boosting"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 5,
+      name: "Digestive Enzyme Complex",
+      price: "2,100",
+      originalPrice: "2,800",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753871838/capsules_twqx2t.webp",
+      category: "Supplements",
+      subCategory: "Enzymes",
+      description: "Complete digestive enzyme formula for optimal gut health and nutrient absorption.",
+      benefits: ["Digestive Disorder"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    {
+      id: 6,
+      name: "Lavender Essential Oil",
+      price: "1,200",
+      originalPrice: "1,600",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Extracts",
+      subCategory: "Essential Oils",
+      description: "Pure lavender essential oil for relaxation and aromatherapy.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.9,
+      inStock: true
+    },
+    {
+      id: 7,
+      name: "Organic Chia Seeds",
+      price: "890",
+      originalPrice: "1,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Nuts & Seeds",
+      subCategory: "Seeds",
+      description: "Premium organic chia seeds packed with omega-3 fatty acids and fiber.",
+      benefits: ["Energy Boosting", "Digestive Disorder"],
+      sale: true,
+      rating: 4.5,
+      inStock: true
+    },
+    {
+      id: 8,
+      name: "Vitamin D3 + K2 Complex",
+      price: "1,750",
+      originalPrice: "2,300",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753871838/capsules_twqx2t.webp",
+      category: "Supplements",
+      subCategory: "Vitamins",
+      description: "High-potency vitamin D3 with K2 for bone health and immune support.",
+      benefits: ["Immune Boosting"],
+      sale: true,
+      rating: 4.7,
+      inStock: true
+    },
+    {
+      id: 9,
+      name: "Organic Coconut Oil",
+      price: "950",
+      originalPrice: "1,300",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Fats & Oils",
+      subCategory: "Coconut Oil",
+      description: "Cold-pressed virgin coconut oil for cooking and skincare.",
+      benefits: ["Energy Boosting"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 10,
+      name: "Echinacea Tincture",
+      price: "1,400",
+      originalPrice: "1,900",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Extracts",
+      subCategory: "Tinctures",
+      description: "Potent echinacea tincture for immune system support and cold prevention.",
+      benefits: ["Immune Boosting"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    {
+      id: 11,
+      name: "Probiotics 50 Billion CFU",
+      price: "2,200",
+      originalPrice: "2,900",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753871838/capsules_twqx2t.webp",
+      category: "Supplements",
+      subCategory: "Probiotics",
+      description: "Advanced probiotic formula with 50 billion CFU for gut health.",
+      benefits: ["Digestive Disorder", "Immune Boosting"],
+      sale: true,
+      rating: 4.9,
+      inStock: true
+    },
+    {
+      id: 12,
+      name: "Wellness Starter Kit",
+      price: "4,500",
+      originalPrice: "6,000",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Kits & Bundles",
+      subCategory: "Starter kits",
+      description: "Complete wellness kit with essential supplements and herbal products.",
+      benefits: ["Immune Boosting", "Energy Boosting", "Digestive Disorder"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    // Additional Tea Blends
+    {
+      id: 13,
+      name: "Chamomile Herbal Tea",
+      price: "1,200",
+      originalPrice: "1,500",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Tea Blends",
+      subCategory: "Herbal Tea",
+      description: "Calming chamomile tea for relaxation and better sleep.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 14,
+      name: "Ginger Lemon Tea Blend",
+      price: "1,350",
+      originalPrice: "1,800",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Tea Blends",
+      subCategory: "Herbal Tea",
+      description: "Warming ginger and lemon tea for digestion and immunity.",
+      benefits: ["Digestive Disorder", "Immune Boosting"],
+      sale: true,
+      rating: 4.7,
+      inStock: true
+    },
+    // Additional Herbs & Spices
+    {
+      id: 15,
+      name: "Organic Ginger Root Powder",
+      price: "850",
+      originalPrice: "1,100",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      category: "Herbs & Spices",
+      subCategory: "Spices",
+      description: "Pure ginger root powder for cooking and medicinal use.",
+      benefits: ["Digestive Disorder", "Immune Boosting"],
+      sale: true,
+      rating: 4.5,
+      inStock: true
+    },
+    {
+      id: 16,
+      name: "Cinnamon Bark Powder",
+      price: "950",
+      originalPrice: "1,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      category: "Herbs & Spices",
+      subCategory: "Spices",
+      description: "Ceylon cinnamon bark powder for blood sugar support.",
+      benefits: ["Blood cleansers", "Energy Boosting"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    // Additional Nuts & Seeds
+    {
+      id: 17,
+      name: "Organic Flax Seeds",
+      price: "750",
+      originalPrice: "950",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Nuts & Seeds",
+      subCategory: "Seeds",
+      description: "Golden flax seeds rich in omega-3 and fiber.",
+      benefits: ["Digestive Disorder", "Energy Boosting"],
+      sale: true,
+      rating: 4.4,
+      inStock: true
+    },
+    {
+      id: 18,
+      name: "Organic Pumpkin Seeds",
+      price: "1,100",
+      originalPrice: "1,400",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Nuts & Seeds",
+      subCategory: "Seeds",
+      description: "Raw pumpkin seeds packed with zinc and magnesium.",
+      benefits: ["Immune Boosting", "Energy Boosting"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    },
+    // Additional Fats & Oils
+    {
+      id: 19,
+      name: "Cold-Pressed Olive Oil",
+      price: "1,800",
+      originalPrice: "2,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Fats & Oils",
+      subCategory: "Olive Oil",
+      description: "Extra virgin cold-pressed olive oil for cooking and health.",
+      benefits: ["Energy Boosting"],
+      sale: true,
+      rating: 4.7,
+      inStock: true
+    },
+    {
+      id: 20,
+      name: "MCT Oil Blend",
+      price: "2,200",
+      originalPrice: "2,800",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Fats & Oils",
+      subCategory: "Coconut Oil",
+      description: "Medium-chain triglyceride oil for ketogenic diet and energy.",
+      benefits: ["Energy Boosting"],
+      sale: true,
+      rating: 4.5,
+      inStock: true
+    },
+    // Additional Kits & Bundles
+    {
+      id: 21,
+      name: "Immune Support Bundle",
+      price: "3,800",
+      originalPrice: "5,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Kits & Bundles",
+      subCategory: "Wellness Bundles",
+      description: "Complete immune support package with vitamin C, zinc, and echinacea.",
+      benefits: ["Immune Boosting"],
+      sale: true,
+      rating: 4.9,
+      inStock: true
+    },
+    {
+      id: 22,
+      name: "Digestive Health Kit",
+      price: "3,200",
+      originalPrice: "4,500",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Kits & Bundles",
+      subCategory: "Wellness Bundles",
+      description: "Comprehensive digestive health support with probiotics and enzymes.",
+      benefits: ["Digestive Disorder"],
+      sale: true,
+      rating: 4.7,
+      inStock: true
+    },
+    // Bath and Body products
+    {
+      id: 23,
+      name: "Organic Body Lotion",
+      price: "1,500",
+      originalPrice: "2,000",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Bath and Body",
+      subCategory: "Body Care",
+      description: "Natural body lotion with shea butter and essential oils.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.5,
+      inStock: true
+    },
+    {
+      id: 24,
+      name: "Herbal Bath Salts",
+      price: "950",
+      originalPrice: "1,300",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753303006/turmeric-powder_kpfh3p.jpg",
+      category: "Bath and Body",
+      subCategory: "Bath Products",
+      description: "Relaxing bath salts with lavender and eucalyptus.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    },
+    {
+      id: 25,
+      name: "Natural Soap Collection",
+      price: "1,200",
+      originalPrice: "1,600",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753302948/high-angle-lemon-ginger-slices-cutting-board_sox2gh.jpg",
+      category: "Bath and Body",
+      subCategory: "Body Care",
+      description: "Set of 3 natural soaps with different essential oils.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.4,
+      inStock: true
+    },
+    // Books and Education
+    {
+      id: 26,
+      name: "Herbal Medicine Guide",
+      price: "2,500",
+      originalPrice: "3,200",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Books and Education",
+      subCategory: "Health Books",
+      description: "Comprehensive guide to herbal medicine and natural remedies.",
+      benefits: ["Immune Boosting", "Stress and Anxiety"],
+      sale: true,
+      rating: 4.8,
+      inStock: true
+    },
+    {
+      id: 27,
+      name: "Natural Wellness Course",
+      price: "4,800",
+      originalPrice: "6,500",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Books and Education",
+      subCategory: "Online Courses",
+      description: "Online course covering natural health and wellness practices.",
+      benefits: ["Immune Boosting", "Energy Boosting", "Stress and Anxiety"],
+      sale: true,
+      rating: 4.9,
+      inStock: true
+    },
+    {
+      id: 28,
+      name: "Essential Oils Handbook",
+      price: "1,800",
+      originalPrice: "2,400",
+      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1748982986/basket-full-vegetables_mp02db.jpg",
+      category: "Books and Education",
+      subCategory: "Health Books",
+      description: "Complete guide to using essential oils for health and wellness.",
+      benefits: ["Stress and Anxiety"],
+      sale: true,
+      rating: 4.6,
+      inStock: true
+    }
+  ];
+
+  const [filteredProducts, setFilteredProducts] = useState(allProducts);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
+  const [selectedBenefit, setSelectedBenefit] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [viewMode, setViewMode] = useState('grid');
@@ -18,7 +424,13 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
     { name: 'All Categories', value: 'all' },
     { name: 'Herbs & Spices', value: 'herbs-spices' },
     { name: 'Extracts', value: 'extracts' },
-    { name: 'Supplements', value: 'supplements' }
+    { name: 'Supplements', value: 'supplements' },
+    { name: 'Tea Blends', value: 'tea-blends' },
+    { name: 'Nuts & Seeds', value: 'nuts-seeds' },
+    { name: 'Fats & Oils', value: 'fats-oils' },
+    { name: 'Kits & Bundles', value: 'kits-bundles' },
+    { name: 'Bath and Body', value: 'bath-body' },
+    { name: 'Books and Education', value: 'books-education' }
   ];
 
   const subCategories = {
@@ -26,16 +438,14 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
       'All Herbs & Spices',
       'Medicinal Herbs',
       'Culinary Herbs',
-      'Spices',
-      'Tea Blends'
+      'Spices'
     ],
     'extracts': [
       'All Extracts',
       'Tinctures',
       'Essential Oils',
       'Capsules',
-      'Powders',
-      'Liquid Extracts'
+      'Powder'
     ],
     'supplements': [
       'All Supplements',
@@ -45,8 +455,55 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
       'Probiotics',
       'Amino Acids',
       'Enzymes'
+    ],
+    'tea-blends': [
+      'All Tea Blends',
+      'Green Tea',
+      'Herbal Tea',
+      'Black Tea',
+      'White Tea'
+    ],
+    'nuts-seeds': [
+      'All Nuts & Seeds',
+      'Seeds',
+      'Nuts',
+      'Dried Fruits'
+    ],
+    'fats-oils': [
+      'All Fats & Oils',
+      'Coconut Oil',
+      'Olive Oil',
+      'Essential Oils'
+    ],
+    'kits-bundles': [
+      'All Kits & Bundles',
+      'Wellness Bundles',
+      'Recipe packs',
+      'Seasonal/Holiday Gift Sets',
+      'Starter kits'
+    ],
+    'bath-body': [
+      'All Bath and Body',
+      'Body Care',
+      'Bath Products',
+      'Skincare'
+    ],
+    'books-education': [
+      'All Books and Education',
+      'Health Books',
+      'Online Courses',
+      'Guides & Manuals'
     ]
   };
+
+  const benefits = [
+    { name: 'All Benefits', value: 'all' },
+    { name: 'Immune Boosting', value: 'immune-boosting' },
+    { name: 'Digestive Disorder', value: 'digestive-disorder' },
+    { name: 'Blood cleansers', value: 'blood-cleansers' },
+    { name: 'Stress and Anxiety', value: 'stress-anxiety' },
+    { name: 'Energy Boosting', value: 'energy-boosting' }
+  ];
 
   const priceRanges = [
     { label: 'All Prices', value: 'all', min: 0, max: Infinity },
@@ -57,21 +514,30 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
   ];
 
  useEffect(() => {
-  let filtered = allProducts || [];
+  let filtered = allProducts;
 
   // Filter by category
   if (selectedCategory !== 'all') {
     filtered = filtered.filter(product => 
-      product.category.toLowerCase() === selectedCategory.toLowerCase() ||
-      product.category.toLowerCase().includes(selectedCategory.toLowerCase())
+      product.category.toLowerCase().replace('&', '').replace(/\s+/g, '-') === selectedCategory.toLowerCase() ||
+      product.category.toLowerCase().includes(selectedCategory.toLowerCase().replace('-', ' '))
     );
   }
 
   // Filter by subcategory
-  if (selectedSubCategory !== 'all' && selectedSubCategory !== 'All Herbs & Spices' && 
-      selectedSubCategory !== 'All Extracts' && selectedSubCategory !== 'All Supplements') {
+  if (selectedSubCategory !== 'all' && !selectedSubCategory.startsWith('All ')) {
     filtered = filtered.filter(product => 
       product.subCategory && product.subCategory.toLowerCase() === selectedSubCategory.toLowerCase()
+    );
+  }
+
+  // Filter by benefits
+  if (selectedBenefit !== 'all') {
+    const benefitSearch = selectedBenefit.toLowerCase().replace('-', ' ');
+    filtered = filtered.filter(product => 
+      product.benefits && product.benefits.some(benefit => 
+        benefit.toLowerCase().includes(benefitSearch)
+      )
     );
   }
 
@@ -82,8 +548,10 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
       return (
         product.name.toLowerCase().includes(searchLower) ||
         (product.description && product.description.toLowerCase().includes(searchLower)) ||
-        (product.diseases && product.diseases.some(disease => 
-          disease.toLowerCase().includes(searchLower)
+        (product.category && product.category.toLowerCase().includes(searchLower)) ||
+        (product.subCategory && product.subCategory.toLowerCase().includes(searchLower)) ||
+        (product.benefits && product.benefits.some(benefit => 
+          benefit.toLowerCase().includes(searchLower)
         ))
       );
     });
@@ -122,13 +590,32 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
   });
 
   setFilteredProducts(filtered);
-}, [selectedCategory, selectedSubCategory, priceRange, sortBy, searchTerm, allProducts]);
+}, [selectedCategory, selectedSubCategory, selectedBenefit, priceRange, sortBy, searchTerm]);
 
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     setSelectedCategory(value);
     setSelectedSubCategory('all');
+    setSelectedBenefit('all');
     setShowSubCategories(value !== 'all');
+  };
+
+  const resetFilters = () => {
+    setSelectedCategory('all');
+    setSelectedSubCategory('all');
+    setSelectedBenefit('all');
+    setPriceRange('all');
+    setSearchTerm('');
+    setSortBy('default');
+    setShowSubCategories(false);
+  };
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setCartNotification({ show: true, productName: product.name });
+    setTimeout(() => {
+      setCartNotification({ show: false, productName: '' });
+    }, 3000);
   };
 
   return (
@@ -158,7 +645,7 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
                       </button>
                       <button 
                         className="action-btn add-to-cart"
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleAddToCart(product)}
                       >
                         +
                       </button>
@@ -255,6 +742,18 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
             </select>
 
             <select 
+              value={selectedBenefit} 
+              onChange={(e) => setSelectedBenefit(e.target.value)}
+              className="filter-select"
+            >
+              {benefits.map((benefit) => (
+                <option key={benefit.value} value={benefit.value}>
+                  {benefit.name}
+                </option>
+              ))}
+            </select>
+
+            <select 
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value)}
               className="filter-select"
@@ -271,6 +770,13 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
             <div className="results-count">
               {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
             </div>
+            
+            <button 
+              onClick={resetFilters}
+              className="reset-filters-btn"
+            >
+              Clear Filters
+            </button>
           </div>
         </div>
 
@@ -280,7 +786,7 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
               {product.sale && <span className="sale-badge">Sale!</span>}
               
               <div className="product-image">
-                <LazyLoad height={250} offset={100} placeholder={<div className="image-placeholder">Loading...</div>}>
+                <LazyLoad height={150} offset={100} placeholder={<div className="image-placeholder">Loading...</div>}>
                   <img src={product.image} alt={product.name} />
                 </LazyLoad>
                 <div className="product-overlay">
@@ -301,25 +807,7 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
 
               <div className="product-details">
                 <div className="product-category-badge">{product.category}</div>
-                {product.subCategory && (
-                  <div className="product-subcategory">{product.subCategory}</div>
-                )}
                 <h3 className="product-name">{product.name}</h3>
-                
-                {product.description && (
-                  <p className="product-description">{product.description}</p>
-                )}
-
-                {product.benefits && (
-                  <div className="product-benefits">
-                    <span className="benefits-label">Key Benefits:</span>
-                    <ul className="benefits-list">
-                      {product.benefits.slice(0, 3).map((benefit, index) => (
-                        <li key={index}>{benefit}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
 
                 <div className="product-price">
                   {product.originalPrice && (
@@ -330,7 +818,7 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
 
                 <button 
                   className="add-to-cart-btn"
-                  onClick={() => addToCart(product)}
+                  onClick={() => handleAddToCart(product)}
                 >
                   Add to Cart
                 </button>
@@ -346,15 +834,19 @@ const Shop = ({ allProducts, bestSellers, onQuickView, onProductView, onSearch }
             <p>Try adjusting your filters or search terms</p>
             <button 
               className="reset-filters-btn"
-              onClick={() => {
-                setSelectedCategory('all');
-                setSelectedSubCategory('all');
-                setPriceRange('all');
-                setSearchTerm('');
-              }}
+              onClick={resetFilters}
             >
               Reset All Filters
             </button>
+          </div>
+        )}
+
+        {/* Cart Notification */}
+        {cartNotification.show && (
+          <div className="cart-notification">
+            <div className="notification-content">
+              <span>✅ {cartNotification.productName} added to cart!</span>
+            </div>
           </div>
         )}
       </div>

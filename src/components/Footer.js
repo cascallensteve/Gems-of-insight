@@ -190,13 +190,11 @@ const Footer = () => {
               Important Medical Disclaimer
             </h5>
             <div className="disclaimer-text">
-              <p><strong>Professional Medical Notice:</strong> The information provided by Gems of Insight is for educational and informational purposes only and is not intended as medical advice. Our herbal consultations and natural remedies are complementary wellness services and should not replace conventional medical treatment.</p>
+              <p>The information provided on this website is for educational and informational purposes only and is not intended as medical advice. It is not a substitute for professional healthcare diagnosis, treatment, or guidance. Always consult with a qualified physician or licensed naturopathic doctor before making changes to your health regimen, especially if you have a medical condition or are taking medications.</p>
               
-              <p><strong>Consultation Requirement:</strong> Always consult with qualified healthcare professionals before starting any herbal treatment, especially if you have existing medical conditions, are pregnant, nursing, or taking medications. Individual results may vary, and herbal remedies may interact with prescription medications.</p>
+              <p>Products and services mentioned on this site are not intended to diagnose, treat, cure, or prevent any disease. Individual results may vary. Gems of Insight disclaims any liability for decisions made based on the content of this website.</p>
               
-              <p><strong>Emergency Situations:</strong> In case of medical emergencies, seek immediate professional medical attention. Do not rely solely on herbal remedies for serious health conditions. Our services complement but do not replace proper medical care.</p>
-              
-              <p><strong>Regulatory Compliance:</strong> While our practitioners are licensed herbalists approved by relevant Kenyan authorities, our products and services have not been evaluated by the Kenya Medical Research Institute for treating specific diseases. We make no claims to cure, treat, or prevent any medical condition.</p>
+              <p>By using this site, you agree to these terms. If you do not agree, please discontinue use.</p>
             </div>
           </div>
         </div>

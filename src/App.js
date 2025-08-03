@@ -16,7 +16,6 @@ import BlackFridayBanner from './components/BlackFridayBanner';
 import TrendingProducts from './components/TrendingProducts';
 import DealOfTheWeek from './components/DealOfTheWeek';
 import BlogSection from './components/BlogSection';
-import Newsletter from './components/Newsletter';
 
 import BlogPage from './components/BlogPage';
 import LoginPage from './components/LoginPage';
@@ -92,7 +91,6 @@ function AppContent() {
                 <TrendingProducts />
                 <DealOfTheWeek />
                 <BlogSection />
-                <Newsletter />
               </>
             }
           />

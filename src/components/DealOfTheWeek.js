@@ -29,7 +29,7 @@ const DealOfTheWeek = () => {
     price: "KSh 2,500",
     originalPrice: "KSh 4,000",
     image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753347468/colorful-fruits-tasty-fresh-ripe-juicy-white-desk_jalaan.jpg",
-    description: "Join our comprehensive weekly classes on natural remedies and holistic healing. Learn about herbal medicine, essential oils, nutrition therapy, and traditional healing methods.",
+    description: "Weekly classes on natural remedies. Learn herbal medicine, essential oils, and traditional healing methods.",
     savings: "38%",
     rating: 4.9,
     reviews: 156,
@@ -112,8 +112,8 @@ const DealOfTheWeek = () => {
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>
-          <h2>Weekly Classes on Natural Remedies</h2>
-          <p>Join our weekly classes and discover the power of natural healing!</p>
+          <h2>Weekly Natural Remedies Classes</h2>
+          <p>Discover the power of natural healing!</p>
         </motion.div>
 
         <motion.div className="deal-card" variants={itemVariants}>

@@ -53,8 +53,8 @@ const WeeklyOffersSection = () => {
     {
       id: 1,
       title: "Weekly Natural Remedies Classes",
-      subtitle: "Comprehensive Holistic Healing Course",
-      description: "Join our comprehensive weekly classes on natural remedies and holistic healing. Learn about herbal medicine, essential oils, nutrition therapy, and traditional healing methods.",
+      subtitle: "Holistic Healing Course",
+      description: "Weekly classes on natural remedies. Learn herbal medicine, essential oils, and traditional healing methods.",
       rating: 4.8,
       reviewCount: 156,
       currentPrice: 2500,
