@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Add Blog Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; white-space: pre-wrap; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .api-spec { background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Test Add Blog Functionality</h1>
+        
+        <div class="section info">
+            <h3>📋 API Specification</h3>
+            <div class="api-spec">
+<strong>Endpoint:</strong> https://gems-of-truth.vercel.app/blogs/add-blog
+<strong>Method:</strong> POST
+<strong>Auth:</strong> Required (Token header)
+
+<strong>Request Data:</strong>
+{
+    "title": "NEWSTART: 8 Principles for healthy living",
+    "description": "Discover these eight Principles of healthy living", 
+    "body": "In this chapter, we discuss eight ways that you can improve your life and be more happier",
+    "read_time": "8 minutes",
+    "tag_list": "Sunshine God Air Water Health Relationship Nutrition"
+}
+
+<strong>Expected Response:</strong>
+{
+    "blog": {
+        "id": 6,
+        "tags": ["Sunshine", "God", "Air", "Water", "Health", "Relationship", "Nutrition"],
+        "author": { ... },
+        "title": "...",
+        "description": "...",
+        "body": "...",
+        "read_time": "...",
+        "timestamp": "..."
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔐 Authentication</h3>
+            <div class="form-group">
+                <label for="authToken">Authentication Token:</label>
+                <input type="text" id="authToken" placeholder="Enter your authentication token (Token header)" />
+                <small style="color: #666;">You need a valid authentication token to add blogs. Get this from your admin login.</small>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 Blog Data</h3>
+            <div class="form-group">
+                <label for="blogTitle">Title: *</label>
+                <input type="text" id="blogTitle" value="NEWSTART: 8 Principles for healthy living" />
+            </div>
+            
+            <div class="form-group">
+                <label for="blogDescription">Description: *</label>
+                <textarea id="blogDescription" rows="3">Discover these eight Principles of healthy living</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="blogBody">Body Content: *</label>
+                <textarea id="blogBody" rows="5">In this chapter, we discuss eight ways that you can improve your life and be more happier</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="readTime">Read Time: *</label>
+                <input type="text" id="readTime" value="8 minutes" />
+            </div>
+            
+            <div class="form-group">
+                <label for="tagList">Tags (space separated): *</label>
+                <input type="text" id="tagList" value="Sunshine God Air Water Health Relationship Nutrition" />
+            </div>
+            
+            <button onclick="addBlog()" id="addBlogBtn">🚀 Add Blog</button>
+            <button onclick="clearForm()">🔄 Clear Form</button>
+        </div>
+
+        <div class="section">
+            <h3>📊 Test Results</h3>
+            <div id="testResults">
+                <p>Click "Add Blog" to test the functionality...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔍 Verify Added Blog</h3>
+            <button onclick="fetchAllBlogs()">📋 Fetch All Blogs</button>
+            <button onclick="fetchLatestBlog()">🆕 Fetch Latest Blog</button>
+            <div id="verifyResults"></div>
+        </div>
+
+        <div class="section info">
+            <h3>💡 How to Use</h3>
+            <ol>
+                <li>Get an authentication token by logging into the admin panel</li>
+                <li>Enter the token in the "Authentication Token" field</li>
+                <li>Fill in the blog data (pre-filled with example data)</li>
+                <li>Click "Add Blog" to test the functionality</li>
+                <li>Check the results and verify the blog was created</li>
+            </ol>
+            
+            <p><strong>Admin Panel:</strong> <a href="http://localhost:3001/admin" target="_blank">localhost:3001/admin</a></p>
+            <p><strong>Blog Page:</strong> <a href="http://localhost:3001/blog" target="_blank">localhost:3001/blog</a></p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://gems-of-truth.vercel.app';
+
+        async function addBlog() {
+            const resultsDiv = document.getElementById('testResults');
+            const addBlogBtn = document.getElementById('addBlogBtn');
+            
+            // Get form data
+            const token = document.getElementById('authToken').value.trim();
+            const blogData = {
+                title: document.getElementById('blogTitle').value.trim(),
+                description: document.getElementById('blogDescription').value.trim(),
+                body: document.getElementById('blogBody').value.trim(),
+                read_time: document.getElementById('readTime').value.trim(),
+                tag_list: document.getElementById('tagList').value.trim()
+            };
+
+            // Validate required fields
+            const requiredFields = ['title', 'description', 'body', 'read_time', 'tag_list'];
+            const missingFields = requiredFields.filter(field => !blogData[field]);
+            
+            if (!token) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Authentication Required</h4>
+                        <p>Please enter an authentication token.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (missingFields.length > 0) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Missing Required Fields</h4>
+                        <p>Please fill in: ${missingFields.join(', ')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Disable button and show loading
+            addBlogBtn.disabled = true;
+            addBlogBtn.textContent = '⏳ Adding Blog...';
+            
+            resultsDiv.innerHTML = `
+                <div class="result">
+                    <h4>⏳ Testing Add Blog...</h4>
+                    <p>Sending request to: ${API_BASE_URL}/blogs/add-blog</p>
+                    <p>With data: ${JSON.stringify(blogData, null, 2)}</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/blogs/add-blog`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Token': token
+                    },
+                    body: JSON.stringify(blogData)
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="result success">
+                            <h4>✅ Blog Added Successfully!</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Blog ID:</strong> ${responseData.blog?.id}</p>
+                            <p><strong>Title:</strong> ${responseData.blog?.title}</p>
+                            <p><strong>Author:</strong> ${responseData.blog?.author ? responseData.blog.author.first_name + ' ' + responseData.blog.author.last_name : 'No author'}</p>
+                            <p><strong>Tags:</strong> ${responseData.blog?.tags ? responseData.blog.tags.join(', ') : 'No tags'}</p>
+                            <p><strong>Timestamp:</strong> ${responseData.blog?.timestamp}</p>
+                            <p><strong>Full Response:</strong></p>
+                            <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ Failed to Add Blog</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Error:</strong> ${responseData.message || 'Unknown error'}</p>
+                            <p><strong>Response:</strong></p>
+                            <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Network Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure you're connected to the internet and the API is accessible.</p>
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                addBlogBtn.disabled = false;
+                addBlogBtn.textContent = '🚀 Add Blog';
+            }
+        }
+
+        async function fetchAllBlogs() {
+            const resultsDiv = document.getElementById('verifyResults');
+            resultsDiv.innerHTML = '<p>⏳ Fetching all blogs...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/blogs/all-blogs`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="result success">
+                            <h4>✅ All Blogs Fetched</h4>
+                            <p><strong>Total Blogs:</strong> ${data.blogs ? data.blogs.length : 0}</p>
+                            <p><strong>Blogs:</strong></p>
+                            ${data.blogs ? data.blogs.map(blog => `
+                                <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 4px;">
+                                    <strong>ID ${blog.id}:</strong> ${blog.title}<br>
+                                    <small>By: ${blog.author ? blog.author.first_name + ' ' + blog.author.last_name : 'Unknown'} | ${blog.timestamp}</small>
+                                </div>
+                            `).join('') : '<p>No blogs found</p>'}
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ Failed to Fetch Blogs</h4>
+                            <p>Status: ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function fetchLatestBlog() {
+            const resultsDiv = document.getElementById('verifyResults');
+            resultsDiv.innerHTML = '<p>⏳ Fetching latest blog...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/blogs/all-blogs`);
+                const data = await response.json();
+
+                if (response.ok && data.blogs && data.blogs.length > 0) {
+                    // Sort by timestamp to get latest
+                    const sortedBlogs = data.blogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    const latestBlog = sortedBlogs[0];
+
+                    resultsDiv.innerHTML = `
+                        <div class="result success">
+                            <h4>✅ Latest Blog</h4>
+                            <p><strong>ID:</strong> ${latestBlog.id}</p>
+                            <p><strong>Title:</strong> ${latestBlog.title}</p>
+                            <p><strong>Description:</strong> ${latestBlog.description}</p>
+                            <p><strong>Author:</strong> ${latestBlog.author ? latestBlog.author.first_name + ' ' + latestBlog.author.last_name : 'Unknown'}</p>
+                            <p><strong>Tags:</strong> ${latestBlog.tags ? latestBlog.tags.join(', ') : 'No tags'}</p>
+                            <p><strong>Read Time:</strong> ${latestBlog.read_time}</p>
+                            <p><strong>Created:</strong> ${latestBlog.timestamp}</p>
+                            <p><strong>Body Preview:</strong> ${latestBlog.body ? latestBlog.body.substring(0, 200) + '...' : 'No content'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ No Blogs Found</h4>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('blogTitle').value = 'NEWSTART: 8 Principles for healthy living';
+            document.getElementById('blogDescription').value = 'Discover these eight Principles of healthy living';
+            document.getElementById('blogBody').value = 'In this chapter, we discuss eight ways that you can improve your life and be more happier';
+            document.getElementById('readTime').value = '8 minutes';
+            document.getElementById('tagList').value = 'Sunshine God Air Water Health Relationship Nutrition';
+            document.getElementById('testResults').innerHTML = '<p>Form cleared. Ready to test...</p>';
+        }
+    </script>
+</body>
+</html>

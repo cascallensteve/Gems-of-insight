@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Layout Test</title>
+    <style>
+        body { margin: 0; padding: 0; }
+        .test-container {
+            width: 100vw;
+            height: 100vh;
+            background: #f0f0f0;
+            position: relative;
+        }
+        .admin-layout-test {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #f0f7f4 0%, #e0f2f1 100%);
+            z-index: 10000;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+        }
+        .sidebar-test {
+            background: linear-gradient(180deg, #1a3a1a 0%, #2e5a2e 50%, #1a3a1a 100%);
+            color: white;
+            padding: 20px;
+            z-index: 10004;
+        }
+        .main-content-test {
+            background: #f8fafc;
+            padding: 20px;
+            z-index: 10001;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="admin-layout-test">
+            <div class="sidebar-test">
+                <h3>Admin Sidebar</h3>
+                <p>Navigation menu</p>
+            </div>
+            <div class="main-content-test">
+                <h1>Admin Content</h1>
+                <p>This content should not be covered by any overlays.</p>
+                <div style="height: 1000px; background: linear-gradient(to bottom, #fff, #eee);">
+                    <p>Scrollable content area</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
