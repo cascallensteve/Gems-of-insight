@@ -1,0 +1,638 @@
+/* Admin Layout Global Overrides */
+body:has(.admin-layout) {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure modals appear above admin layout */
+.modal-overlay {
+  z-index: 999999 !important;
+}
+
+/* Admin Layout Styles */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f7f4 0%, #e0f2f1 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  z-index: 10000;
+}
+
+/* Responsive Grid Layout */
+@media (max-width: 1024px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-layout--with-sidebar {
+    grid-template-columns: 240px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-layout--with-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Custom scrollbar for admin */
+.admin-layout::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-layout::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.admin-layout::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  border-radius: 4px;
+}
+
+.admin-layout::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+}
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10005;
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.mobile-menu-toggle:hover {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(46, 125, 50, 0.4);
+}
+
+.mobile-menu-toggle:active {
+  transform: translateY(-1px);
+}
+
+/* Show mobile menu toggle on small screens */
+@media (max-width: 1024px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+}
+
+/* Sidebar */
+.vertical-admin-navbar {
+  background: linear-gradient(180deg, #1a3a1a 0%, #2e5a2e 50%, #1a3a1a 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 240px;
+  height: 100vh;
+  z-index: 10004;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 1024px) {
+  .vertical-admin-navbar {
+    transform: translateX(-100%);
+    width: 240px;
+  }
+  
+  .vertical-admin-navbar.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar {
+    width: 100vw;
+    max-width: 280px;
+  }
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10003;
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-overlay {
+    display: block;
+  }
+}
+
+/* Main Content Area */
+.admin-main {
+  margin-left: 240px;
+  padding: 16px; /* Increased from 12px to 16px for better content visibility */
+  overflow-y: auto;
+  height: 100vh;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Ensure content is not masked */
+  box-sizing: border-box;
+  width: calc(100vw - 240px); /* Ensure proper width calculation */
+}
+
+.admin-main--with-sidebar {
+  margin-left: 240px;
+}
+
+@media (max-width: 1024px) {
+  .admin-main {
+    margin-left: 0;
+    padding: 12px;
+    width: 100vw; /* Full width on mobile */
+  }
+  
+  .admin-main--with-sidebar {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main {
+    padding: 10px;
+  }
+}
+
+/* Top Header */
+.admin-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Increased from 16px to 20px for better separation */
+  padding: 16px 20px; /* Increased padding for better content visibility */
+  background: white;
+  border-radius: 12px; /* Increased from 10px for better visual appeal */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); /* Adjusted shadow */
+  backdrop-filter: blur(20px);
+  /* Ensure header is fully visible */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .admin-top-header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-top-header {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+}
+
+.admin-top-header__title {
+  font-size: 1.75rem; /* Increased from 1.6rem for better readability */
+  font-weight: 700;
+  color: #1a3a1a;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-top-header__title {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-top-header__title {
+    font-size: 1.2rem;
+  }
+}
+
+.admin-top-header__right {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Increased from 12px for better spacing */
+}
+
+@media (max-width: 768px) {
+  .admin-top-header__right {
+    gap: 12px;
+  }
+}
+
+.admin-top-header__time {
+  font-size: 1rem; /* Increased from 0.9rem for better readability */
+  font-weight: 600;
+  color: #2e7d32;
+  background: rgba(46, 125, 50, 0.1);
+  padding: 8px 14px; /* Increased padding for better touch targets */
+  border-radius: 8px; /* Increased from 6px */
+}
+
+@media (max-width: 480px) {
+  .admin-top-header__time {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+}
+
+.admin-top-header__bell {
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px; /* Increased from 8px for better touch targets */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(46, 125, 50, 0.25);
+}
+
+.admin-top-header__bell:hover {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35);
+}
+
+/* Content Area */
+.admin-content {
+  background: white;
+  border-radius: 12px; /* Increased from 10px */
+  padding: 24px; /* Increased from 16px to 24px for better content visibility */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+  min-height: calc(100vh - 200px); /* Adjusted for better content area */
+  /* Ensure content is fully visible */
+  box-sizing: border-box;
+  width: 100%;
+  overflow: visible; /* Ensure content can overflow if needed */
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 18px; /* Increased from 12px */
+    min-height: calc(100vh - 160px);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 16px; /* Increased from 10px */
+    min-height: calc(100vh - 140px);
+  }
+}
+
+/* Responsive Utilities */
+.desktop-hidden {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .desktop-hidden {
+    display: flex;
+  }
+}
+
+.mobile-hidden {
+  display: flex;
+}
+
+@media (max-width: 1024px) {
+  .mobile-hidden {
+    display: none;
+  }
+}
+
+/* Sidebar Profile Section */
+.vertical-admin-navbar__profile {
+  padding: 18px 14px; /* Increased from 16px 12px for better spacing */
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__profile {
+    padding: 14px 12px;
+  }
+}
+
+.vertical-admin-navbar__avatar {
+  width: 65px; /* Increased from 60px for better visibility */
+  height: 65px; /* Increased from 60px for better visibility */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px; /* Increased margin for better separation */
+  font-size: 1.6rem; /* Increased from 1.5rem for better readability */
+  font-weight: 700;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__avatar {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+}
+
+.vertical-admin-navbar__profile-name {
+  display: block;
+  font-size: 1.05rem; /* Increased from 1rem for better readability */
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__profile-name {
+    font-size: 0.95rem;
+  }
+}
+
+.vertical-admin-navbar__profile-role {
+  display: block;
+  font-size: 0.85rem; /* Increased from 0.8rem for better readability */
+  opacity: 0.8;
+}
+
+/* Navigation */
+.vertical-admin-navbar__nav {
+  flex: 1;
+  padding: 14px 0; /* Increased from 12px 0 for better spacing */
+}
+
+.vertical-admin-navbar__nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vertical-admin-navbar__nav li {
+  margin: 0;
+}
+
+.vertical-admin-navbar__nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Increased from 10px for better spacing */
+  width: 100%;
+  padding: 12px 14px; /* Increased from 10px 12px for better touch targets */
+  background: none;
+  border: none;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 0;
+  text-align: left;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__nav-link {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+}
+
+.vertical-admin-navbar__nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(3px); /* Increased from 2px for better visual feedback */
+}
+
+.vertical-admin-navbar__nav-link.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 3px solid #4caf50; /* Increased from 2px for better visibility */
+}
+
+.vertical-admin-navbar__icon {
+  font-size: 1.1rem; /* Increased from 1rem for better visibility */
+  min-width: 22px; /* Increased from 20px for better spacing */
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__icon {
+    font-size: 1rem;
+    min-width: 18px;
+  }
+}
+
+.vertical-admin-navbar__text {
+  font-size: 0.95rem; /* Increased from 0.9rem for better readability */
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__text {
+    font-size: 0.85rem;
+  }
+}
+
+/* Logout Button */
+.vertical-admin-navbar__logout {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Increased from 10px for better spacing */
+  width: 100%;
+  padding: 12px 14px; /* Increased from 10px 12px for better touch targets */
+  background: rgba(220, 53, 69, 0.1);
+  border: none;
+  color: #ff6b6b;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 0;
+  text-align: left;
+  margin-top: auto;
+}
+
+@media (max-width: 480px) {
+  .vertical-admin-navbar__logout {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+}
+
+.vertical-admin-navbar__logout:hover {
+  background: rgba(220, 53, 69, 0.2);
+  color: #ff5252;
+}
+
+/* Responsive Table Styles */
+@media (max-width: 768px) {
+  .appointments-table-container {
+    overflow-x: auto;
+  }
+  
+  .appointments-table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointments-table {
+    min-width: 600px;
+  }
+}
+
+/* Responsive Form Controls */
+@media (max-width: 768px) {
+  .appointments-controls {
+    flex-direction: column;
+    gap: 12px; /* Increased from 10px for better spacing */
+  }
+  
+  .appointments-controls__left,
+  .appointments-controls__right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-input {
+    font-size: 13px; /* Increased from 12px for better readability */
+    padding: 8px 10px; /* Increased padding for better touch targets */
+  }
+  
+  .filter-select {
+    font-size: 13px; /* Increased from 12px for better readability */
+    padding: 8px 10px; /* Increased padding for better touch targets */
+  }
+}
+
+/* Responsive Action Buttons */
+@media (max-width: 768px) {
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Increased from 3px for better spacing */
+  }
+  
+  .btn-sm {
+    padding: 6px 8px; /* Increased padding for better touch targets */
+    font-size: 11px; /* Increased from 10px for better readability */
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    gap: 3px; /* Increased from 2px for better spacing */
+  }
+  
+  .btn-sm {
+    padding: 5px 7px; /* Increased padding for better touch targets */
+    font-size: 10px; /* Increased from 9px for better readability */
+  }
+}
+
+/* Loading and Error States */
+@media (max-width: 768px) {
+  .loading-container,
+  .error-container {
+    padding: 30px 15px; /* Increased padding for better content visibility */
+    text-align: center;
+  }
+  
+  .loading-container h3,
+  .error-container h3 {
+    font-size: 1.2rem; /* Increased from 1.1rem for better readability */
+  }
+  
+  .loading-container p,
+  .error-container p {
+    font-size: 0.85rem; /* Increased from 0.8rem for better readability */
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-container,
+  .error-container {
+    padding: 25px 12px; /* Increased padding for better content visibility */
+  }
+  
+  .loading-container h3,
+  .error-container h3 {
+    font-size: 1.05rem; /* Increased from 1rem for better readability */
+  }
+  
+  .loading-container p,
+  .error-container p {
+    font-size: 0.8rem; /* Increased from 0.75rem for better readability */
+  }
+}
+
+/* Additional fixes for content visibility */
+.admin-content * {
+  box-sizing: border-box;
+}
+
+/* Ensure tables and other content are fully visible */
+.appointments-table-container,
+.users-table-container,
+.products-table-container,
+.orders-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure form controls are properly spaced */
+.appointments-controls,
+.users-controls,
+.products-controls,
+.orders-controls {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Ensure action buttons are properly sized */
+.action-buttons .btn {
+  margin: 2px;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
