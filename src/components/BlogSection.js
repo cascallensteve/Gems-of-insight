@@ -39,7 +39,7 @@ const BlogSection = () => {
           id: blog.id || Math.random().toString(36),
           title: blog.title || 'Untitled Post',
           excerpt: blog.description || 'No description available',
-          image: getRandomImage(),
+          image: blog.photo || getRandomImage(),
           date: blogService.formatTimestamp(blog.timestamp),
           author: blogService.getAuthorName(blog.author),
           category: getCategoryFromTags(blog.tags || []),
@@ -153,8 +153,8 @@ const BlogSection = () => {
     >
       <div className="container">
         <motion.div className="section-header" variants={itemVariants}>
-          <h2>Latest Posts</h2>
-          <p>Stay informed with our latest insights on natural health and wellness</p>
+          <h2>Latest Updates</h2>
+          <p>Fresh insights on natural health, wellness tips, and product news</p>
         </motion.div>
 
         {loading ? (

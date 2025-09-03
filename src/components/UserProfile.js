@@ -147,7 +147,12 @@ const UserProfile = () => {
 
   const handleLogout = () => {
     logout();
+    // Navigate to home page and scroll to top
     window.location.href = '/';
+    // Force scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   };
 
   // Refresh user data when component mounts (only once)

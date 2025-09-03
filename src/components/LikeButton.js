@@ -91,7 +91,7 @@ const LikeButton = ({ blogId, initialLikes = 0, initialIsLiked = false, size = '
         <span className="like-icon">
           {isLiked ? '❤️' : '🤍'}
         </span>
-        <span className="like-count">{likes}</span>
+        <span className="like-count">{likes || 0}</span>
       </button>
       {error && <div className="like-error">{error}</div>}
     </div>

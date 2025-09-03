@@ -121,6 +121,25 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       setError('Failed to load dashboard data. Please try again.');
+      
+      // Set mock data on error
+      setStats(prevStats => ({
+        ...prevStats,
+        totalOrders: 3542,
+        totalRevenue: 125670,
+        newUsersToday: 24,
+        ordersToday: 18
+      }));
+
+      // Mock recent activity
+      setRecentActivity([
+        { id: 1, type: 'user', message: 'New user registration: john.doe@email.com', time: '2 minutes ago' },
+        { id: 2, type: 'order', message: 'New order #3543 - KSh 2,500', time: '15 minutes ago' },
+        { id: 3, type: 'blog', message: 'Blog post published: NEWSTART Health Tips', time: '1 hour ago' },
+        { id: 4, type: 'user', message: 'User profile updated: sarah.wilson@email.com', time: '2 hours ago' },
+        { id: 5, type: 'order', message: 'Order completed #3541 - KSh 1,850', time: '3 hours ago' }
+      ]);
+
     } finally {
       setLoading(false);
     }
@@ -180,7 +199,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
   return (
     <div className="admin-dashboard">
       {/* Dashboard Header */}

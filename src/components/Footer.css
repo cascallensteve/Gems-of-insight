@@ -611,7 +611,6 @@ box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
   gap: 20px;
   flex-wrap: wrap;
 }
-
 /* Responsive Design */
 @media (max-width: 1024px) {
   .footer-content {
@@ -675,7 +674,7 @@ box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
   .copyright-content {
     flex-direction: column;
     text-align: center;
-    gap: 10px;
+    gap: 15px;
   }
   
   .footer-legal {
@@ -686,7 +685,6 @@ box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
     text-align: center;
     margin-top: 15px;
   }
-  
   .areas-list {
     justify-content: center;
   }

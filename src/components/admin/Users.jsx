@@ -17,10 +17,6 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(10);
   const [error, setError] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
-
   const [userForm, setUserForm] = useState({
     firstName: '',
     lastName: '',
@@ -32,7 +28,6 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
-    // Set up polling to check for new users every 30 seconds
     const interval = setInterval(fetchUsers, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -42,21 +37,14 @@ const Users = () => {
       setLoading(true);
       setError(null);
       
-      // Get authentication token
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token required. Please log in as admin.');
       }
       
-      console.log('Fetching users from API...');
-      
-      // Fetch real users from API
       const response = await apiService.users.getAllUsers();
       
-      console.log('API Response:', response);
-      
       if (response && Array.isArray(response)) {
-        // Map API response to expected format
         const formattedUsers = response.map(user => ({
           id: user.id,
           firstName: user.first_name || 'Unknown',
@@ -70,17 +58,11 @@ const Users = () => {
           orders: user.orders_count || 0,
           spent: user.total_spent || 0,
           isEmailVerified: user.is_email_verified || false,
-          // Store original API data for reference
           _originalData: user
         }));
-        
-        console.log('Formatted users:', formattedUsers);
         setUsers(formattedUsers);
-        
-        // Store users in localStorage for dashboard fallback
         localStorage.setItem('adminUsers', JSON.stringify(response));
       } else if (response && response.users && Array.isArray(response.users)) {
-        // Handle case where API returns { users: [...] }
         const formattedUsers = response.users.map(user => ({
           id: user.id,
           firstName: user.first_name || 'Unknown',
@@ -96,20 +78,13 @@ const Users = () => {
           isEmailVerified: user.is_email_verified || false,
           _originalData: user
         }));
-        
-        console.log('Formatted users from response.users:', formattedUsers);
         setUsers(formattedUsers);
-        
-        // Store users in localStorage for dashboard fallback
         localStorage.setItem('adminUsers', JSON.stringify(response.users));
       } else {
-        console.error('Invalid API response format:', response);
         throw new Error('Invalid response format from API');
       }
     } catch (error) {
       console.error('Error fetching users:', error);
-      
-      // Safe error message extraction
       let errorMessage = 'Unknown error occurred while fetching users.';
       
       if (error && typeof error === 'object') {
@@ -134,104 +109,6 @@ const Users = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getMockUsers = () => {
-    // Get any stored user data from localStorage as well
-    const storedUsers = [];
-    try {
-      const userData = localStorage.getItem('userData');
-      if (userData) {
-        const user = JSON.parse(userData);
-        storedUsers.push({
-          id: user.id || 'current',
-          firstName: user.firstName || user.first_name || 'Current',
-          lastName: user.lastName || user.last_name || 'User',
-          email: user.email,
-          phone: user.phone || user.phone_number || 'N/A',
-          role: user.role || user.userType || 'user',
-          status: user.isEmailVerified || user.is_email_verified ? 'active' : 'pending',
-          joinDate: user.createdAt || user.created_at || new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-          orders: 0,
-          spent: 0,
-          isEmailVerified: user.isEmailVerified || user.is_email_verified || false,
-          _originalData: user
-        });
-      }
-    } catch (error) {
-      console.log('No stored user data found');
-    }
-
-    const mockUsers = [
-      {
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@gemsofinsight.com',
-        phone: '+254712345678',
-        role: 'user',
-        status: 'active',
-        joinDate: '2024-01-15',
-        lastLogin: '2024-01-20',
-        orders: 5,
-        spent: 12500,
-        isEmailVerified: true,
-        _originalData: {
-          created_at: '2024-01-15T10:30:00Z',
-          userType: 'user',
-          is_email_verified: true
-        }
-      },
-      {
-        id: 2,
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@gemsofinsight.com',
-        phone: '+254798765432',
-        role: 'user',
-        status: 'active',
-        joinDate: '2024-01-10',
-        lastLogin: '2024-01-19',
-        orders: 3,
-        spent: 7800,
-        isEmailVerified: true,
-        _originalData: {
-          created_at: '2024-01-10T14:20:00Z',
-          userType: 'user',
-          is_email_verified: true
-        }
-      },
-      {
-        id: 3,
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@gemsofinsight.com',
-        phone: '+254700000000',
-        role: 'admin',
-        status: 'active',
-        joinDate: '2024-01-01',
-        lastLogin: new Date().toISOString(),
-        orders: 0,
-        spent: 0,
-        isEmailVerified: true,
-        _originalData: {
-          created_at: '2024-01-01T00:00:00Z',
-          userType: 'admin',
-          is_email_verified: true
-        }
-      }
-    ];
-
-    // Combine stored users with mock users, avoiding duplicates
-    const allUsers = [...storedUsers];
-    mockUsers.forEach(mockUser => {
-      if (!allUsers.find(u => u.email === mockUser.email)) {
-        allUsers.push(mockUser);
-      }
-    });
-
-    return allUsers;
   };
 
   const filteredUsers = users.filter(user => {
@@ -262,7 +139,6 @@ const Users = () => {
     }
   });
 
-  // Pagination
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -339,14 +215,12 @@ const Users = () => {
     e.preventDefault();
     
     if (editingUser) {
-      // Update existing user
       setUsers(users.map(u => 
         u.id === editingUser.id 
           ? { ...u, ...userForm }
           : u
       ));
     } else {
-      // Add new user
       const newUser = {
         id: Date.now(),
         ...userForm,
@@ -399,6 +273,13 @@ const Users = () => {
     <div className="users-management">
       {/* Header */}
       <div className="users-header">
+        <div className="header-logo">
+          <img 
+            src="/images/Gems_of_insight_logo_ghxcbv (1).png" 
+            alt="Gems of Insight Logo" 
+            className="admin-logo"
+          />
+        </div>
         <div className="header-content">
           <h1>User Management</h1>
           <p>Manage and monitor all registered users ({users.length} total)</p>
@@ -409,16 +290,25 @@ const Users = () => {
             onClick={fetchUsers}
             disabled={loading}
           >
-            🔄 Refresh Users
+            <span className="material-icons">refresh</span>
+            Refresh
           </button>
           <button 
             className="add-user-btn"
             onClick={() => setShowUserModal(true)}
           >
-            + Add New User
+            <span className="material-icons">person_add</span>
+            Add User
           </button>
         </div>
       </div>
+
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={fetchUsers}>Try Again</button>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="users-stats">
@@ -501,7 +391,7 @@ const Users = () => {
           <table className="users-table">
             <thead>
               <tr>
-                <th>
+                <th style={{width: '40px'}}>
                   <input
                     type="checkbox"
                     checked={selectedUsers.length === currentUsers.length && currentUsers.length > 0}
@@ -514,17 +404,17 @@ const Users = () => {
                     }}
                   />
                 </th>
-                <th>User</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Email Verified</th>
-                <th>Join Date</th>
-                <th>Last Login</th>
-                <th>Orders</th>
-                <th>Total Spent</th>
-                <th>Actions</th>
+                <th style={{width: '180px'}}>User</th>
+                <th style={{width: '200px'}}>Email</th>
+                <th style={{width: '120px'}}>Phone</th>
+                <th style={{width: '100px'}}>Role</th>
+                <th style={{width: '100px'}}>Status</th>
+                <th style={{width: '120px'}}>Email Verified</th>
+                <th style={{width: '100px'}}>Join Date</th>
+                <th style={{width: '100px'}}>Last Login</th>
+                <th style={{width: '80px'}}>Orders</th>
+                <th style={{width: '120px'}}>Total Spent</th>
+                <th style={{width: '120px'}}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -582,7 +472,7 @@ const Users = () => {
                   </td>
                   <td>
                     <span className={`verification-badge ${user.isEmailVerified ? 'verified' : 'unverified'}`}>
-                      {user.isEmailVerified ? '✅ Verified' : '❌ Unverified'}
+                      {user.isEmailVerified ? 'Verified' : 'Unverified'}
                     </span>
                   </td>
                   <td>{formatDate(user.joinDate)}</td>
@@ -596,28 +486,30 @@ const Users = () => {
                         onClick={() => handleUserAction('view', user.id)}
                         title="View Details"
                       >
-                        👁️
+                        <span className="material-icons">visibility</span>
                       </button>
                       <button 
                         className="action-btn edit"
                         onClick={() => handleUserAction('edit', user.id)}
                         title="Edit User"
                       >
-                        ✏️
+                        <span className="material-icons">edit</span>
                       </button>
                       <button 
                         className="action-btn toggle"
                         onClick={() => handleUserAction('toggle-status', user.id)}
                         title={user.status === 'active' ? 'Deactivate' : 'Activate'}
                       >
-                        {user.status === 'active' ? '⏸️' : '▶️'}
+                        <span className="material-icons">
+                          {user.status === 'active' ? 'toggle_on' : 'toggle_off'}
+                        </span>
                       </button>
                       <button 
                         className="action-btn delete"
                         onClick={() => handleUserAction('delete', user.id)}
                         title="Delete User"
                       >
-                        🗑️
+                        <span className="material-icons">delete</span>
                       </button>
                     </div>
                   </td>
@@ -635,7 +527,7 @@ const Users = () => {
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            Previous
+            <span className="material-icons">chevron_left</span>
           </button>
           
           <div className="page-numbers">
@@ -654,7 +546,7 @@ const Users = () => {
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Next
+            <span className="material-icons">chevron_right</span>
           </button>
         </div>
       )}
@@ -794,7 +686,7 @@ const Users = () => {
                   <div className="detail-item">
                     <label>Email Verified:</label>
                     <span className={`verification-badge ${selectedUserDetails.isEmailVerified ? 'verified' : 'unverified'}`}>
-                      {selectedUserDetails.isEmailVerified ? '✅ Verified' : '❌ Unverified'}
+                      {selectedUserDetails.isEmailVerified ? 'Verified' : 'Unverified'}
                     </span>
                   </div>
                 </div>
@@ -839,6 +731,7 @@ const Users = () => {
                     handleUserAction('edit', selectedUserDetails.id);
                   }}
                 >
+                  <span className="material-icons">edit</span>
                   Edit User
                 </button>
                 <button 
@@ -848,6 +741,7 @@ const Users = () => {
                     setShowUserDetails(false);
                   }}
                 >
+                  <span className="material-icons">refresh</span>
                   Refresh Data
                 </button>
               </div>

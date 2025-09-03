@@ -174,6 +174,7 @@ const NewFooter = () => {
           </div>
           <div className="powered-by">
             <span>Powered by <strong>Technova</strong></span>
+
           </div>
         </div>
       </div>

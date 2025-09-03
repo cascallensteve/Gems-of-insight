@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AppointmentModal.css';
+// import { ArrowLeft, ArrowRight, CalendarCheck } from "lucide-react";
 
 const AppointmentModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,9 @@ const AppointmentModal = ({ isOpen, onClose }) => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState(null);
+  const [error, setError] = useState(null);
 
   const services = [
     { id: 'nutrition', name: 'Nutrition Consultation', price: 'KSH 2,500', duration: '30 min' },
@@ -25,9 +29,9 @@ const AppointmentModal = ({ isOpen, onClose }) => {
   ];
 
   const specialists = [
-    { id: 'sarah', name: 'Dr. Sarah Mitchell', specialty: 'Nutritionist', available: true },
-    { id: 'james', name: 'Dr. James Chen', specialty: 'Herbal Medicine', available: true },
-    { id: 'emily', name: 'Dr. Emily Rodriguez', specialty: 'Wellness Coach', available: false }
+    { id: 'sarah', name: 'Dr.Denzel Odiwuor', specialty: 'Nutritionist', available: true },
+    { id: 'james', name: 'Dr.Elisha Achiando', specialty: 'Herbal Medicine', available: true },
+    
   ];
 
   const timeSlots = [
@@ -49,10 +53,36 @@ const AppointmentModal = ({ isOpen, onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'phone') {
+      // Only allow numbers and + at the beginning
+      const cleanValue = value.replace(/[^\d+]/g, '');
+      
+      // Ensure it starts with +254 for Kenya
+      let formattedValue = cleanValue;
+      if (cleanValue && !cleanValue.startsWith('+254')) {
+        if (cleanValue.startsWith('0')) {
+          // Remove leading 0 and add +254
+          formattedValue = '+254' + cleanValue.substring(1);
+        } else if (cleanValue.startsWith('254')) {
+          // Add + if missing
+          formattedValue = '+' + cleanValue;
+        } else if (!cleanValue.startsWith('+')) {
+          // Add +254 prefix
+          formattedValue = '+254' + cleanValue;
+        }
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: formattedValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleNext = () => {
@@ -152,8 +182,29 @@ const handleSubmit = async (e) => {
     }
 
     const data = JSON.parse(responseText);
-    alert("✅ " + (data.message || "Appointment booked successfully!"));
+    
+    // Set success data and show success screen
+    setSuccessData({
+      message: data.message || "Appointment booked successfully!",
+      appointmentDetails: {
+        name: formData.fullName,
+        service: services.find(s => s.id === formData.service)?.name || 'Selected Service',
+        date: formData.date,
+        time: formData.time,
+        specialist: specialists.find(s => s.id === formData.specialist)?.name || 'Selected Specialist'
+      }
+    });
+    setShowSuccess(true);
+    setError(null);
+  } catch (error) {
+    console.error("Appointment booking error:", error);
+    setError(error.message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
+  const handleSuccessClose = () => {
     // Reset form after success
     setFormData({
       fullName: "",
@@ -167,14 +218,11 @@ const handleSubmit = async (e) => {
       notes: "",
     });
     setCurrentStep(1);
+    setShowSuccess(false);
+    setSuccessData(null);
+    setError(null);
     onClose();
-  } catch (error) {
-    console.error("Appointment booking error:", error);
-    alert("❌ Error: " + error.message);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   const isStepValid = () => {
     switch (currentStep) {
@@ -199,8 +247,83 @@ const handleSubmit = async (e) => {
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
+        {/* Error Display */}
+        {error && (
+          <div className="error-display">
+            <div className="error-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#EF4444" stroke="#DC2626" strokeWidth="2"/>
+                <path d="M15 9L9 15M9 9L15 15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="error-title">Booking Failed</h3>
+            <p className="error-message">{error}</p>
+            <button className="error-close-btn" onClick={() => setError(null)}>
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Success Screen */}
+        {showSuccess && (
+          <div className="success-screen">
+            <div className="success-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#10B981" stroke="#059669" strokeWidth="2"/>
+                <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            
+            <h2 className="success-title">Appointment Booked Successfully! 🎉</h2>
+            <p className="success-message">{successData.message}</p>
+            
+            <div className="appointment-summary">
+              <h3>Appointment Details</h3>
+              <div className="summary-grid">
+                <div className="summary-item">
+                  <span className="summary-label">Name:</span>
+                  <span className="summary-value">{successData.appointmentDetails.name}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Service:</span>
+                  <span className="summary-value">{successData.appointmentDetails.service}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Date:</span>
+                  <span className="summary-value">{new Date(successData.appointmentDetails.date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Time:</span>
+                  <span className="summary-value">{successData.appointmentDetails.time}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Specialist:</span>
+                  <span className="summary-value">{successData.appointmentDetails.specialist}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="success-actions">
+              <button className="success-close-btn" onClick={handleSuccessClose}>
+                Close
+              </button>
+            </div>
+            
+            <div className="success-footer">
+              <p>We've sent a confirmation email to your inbox.</p>
+              <p>Please check your email for further instructions.</p>
+            </div>
+          </div>
+        )}
+
         {/* Progress Bar */}
-        <div className="progress-bar">
+        {!showSuccess && !error && (
+          <div className="progress-bar">
           <div className="progress-steps">
             {[1, 2, 3].map(step => (
               <div 
@@ -223,8 +346,10 @@ const handleSubmit = async (e) => {
             style={{ width: `${(currentStep / 3) * 100}%` }}
           ></div>
         </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="appointment-form">
+        {!showSuccess && !error && (
+          <form onSubmit={handleSubmit} className="appointment-form">
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <div className="form-step">
@@ -260,8 +385,11 @@ const handleSubmit = async (e) => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+254 712 345 678"
+                    pattern="^\+254[0-9]{9}$"
+                    title="Please enter a valid Kenya phone number starting with +254 followed by 9 digits"
                     required
                   />
+                  <small className="phone-hint">Format: +254 followed by 9 digits (e.g., +254712345678)</small>
                 </div>
               </div>
             </div>
@@ -419,6 +547,7 @@ const handleSubmit = async (e) => {
             </div>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

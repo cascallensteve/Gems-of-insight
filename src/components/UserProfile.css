@@ -4,12 +4,18 @@
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Welcome Message */
@@ -275,6 +281,8 @@
   padding: 0 50px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .tab-button {
@@ -309,6 +317,9 @@
   background: white;
   padding: 50px;
   min-height: 500px;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Profile Details */
@@ -321,9 +332,12 @@
 
 .profile-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
   max-width: 800px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group {
@@ -436,6 +450,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .order-card {
@@ -593,8 +610,10 @@
 
 .admin-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .admin-action-btn {
@@ -609,6 +628,10 @@
   align-items: flex-start;
   gap: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .admin-action-btn:hover {
@@ -627,12 +650,16 @@
   font-weight: 700;
   color: #1a202c;
   margin: 0 0 8px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .btn-content p {
   color: #6b7280;
   margin: 0;
   font-size: 0.95rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Loading States */
@@ -719,6 +746,26 @@
     padding-right: 20px;
   }
   
+  .admin-actions {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .admin-action-btn {
+    padding: 25px;
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .btn-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .btn-content p {
+    font-size: 0.9rem;
+  }
+  
   .welcome-content h2 {
     font-size: 1.8rem;
   }
@@ -746,6 +793,18 @@
   
   .profile-tabs {
     overflow-x: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .tab-content {
+    padding: 30px 20px;
+    overflow-x: hidden;
+  }
+  
+  .admin-section {
+    overflow-x: hidden;
+    max-width: 100%;
   }
   
   .tab-button {
@@ -763,6 +822,26 @@
   
   .admin-actions {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .admin-action-btn {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .btn-icon {
+    font-size: 2rem;
+  }
+  
+  .btn-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .btn-content p {
+    font-size: 0.85rem;
   }
   
   .setting-item {
@@ -785,6 +864,30 @@
 @media (max-width: 480px) {
   .welcome-message {
     padding: 25px 15px;
+  }
+  
+  .admin-actions {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .admin-action-btn {
+    padding: 20px 15px;
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .btn-icon {
+    font-size: 1.8rem;
+  }
+  
+  .btn-content h3 {
+    font-size: 1rem;
+  }
+  
+  .btn-content p {
+    font-size: 0.8rem;
   }
   
   .profile-header,

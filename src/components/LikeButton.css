@@ -71,8 +71,8 @@
 
 /* Liked state */
 .like-button.liked {
-  background: linear-gradient(135deg, #013220 0%, #2C5530 100%);
-  border-color: #013220;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #dc2626;
   color: white;
 }
 
@@ -81,19 +81,19 @@
 }
 
 .like-button.liked:hover {
-  background: linear-gradient(135deg, #2C5530 0%, #355E3B 100%);
-  border-color: #2C5530;
-  box-shadow: 0 6px 20px rgba(1, 50, 32, 0.3);
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  border-color: #ef4444;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
 }
 
 /* Animation when liking */
 .like-button:not(.liked):hover {
-  background: linear-gradient(135deg, rgba(1, 50, 32, 0.05) 0%, rgba(44, 85, 48, 0.05) 100%);
-  border-color: #013220;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-color: #dc2626;
 }
 
 .like-button:not(.liked):hover .like-count {
-  color: #013220;
+  color: #dc2626;
 }
 
 /* Heart animation */
@@ -154,11 +154,11 @@
 /* Focus styles for accessibility */
 .like-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(1, 50, 32, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .like-button:focus-visible {
-  outline: 2px solid #013220;
+  outline: 2px solid #dc2626;
   outline-offset: 2px;
 }
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import './CoursesPage.css';
+import apiService from '../services/api';
+import CourseEnrollmentTest from './CourseEnrollmentTest';
 
 const CoursesPage = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +16,6 @@ const CoursesPage = () => {
     homeAddress: '',
     city: '',
     country: 'Kenya',
-    religion: '',
     church: '',
     membershipDuration: '',
     selectedModules: []
@@ -54,6 +55,9 @@ const CoursesPage = () => {
 
   // Auto-rotate images every 5 seconds
   useEffect(() => {
+    // Ensure first image is visible initially
+    setCurrentImageIndex(0);
+    
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         (prevIndex + 1) % rotatingImages.length
@@ -92,18 +96,22 @@ const CoursesPage = () => {
     if (!formData.gender) newErrors.gender = 'Gender is required';
     if (!formData.yearOfBirth) newErrors.yearOfBirth = 'Year of birth is required';
     if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required';
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else {
+      const phoneOk = /^07\d{8}$/.test(formData.phoneNumber.trim());
+      if (!phoneOk) newErrors.phoneNumber = 'Phone must start with 07 and be 10 digits';
+    }
     if (!formData.homeAddress) newErrors.homeAddress = 'Home address is required';
     if (!formData.city) newErrors.city = 'City is required';
     if (!formData.country) newErrors.country = 'Country is required';
-    if (formData.selectedModules.length === 0) {
-      newErrors.selectedModules = 'Please select at least one module';
-    }
+    if (formData.selectedModules.length === 0) newErrors.selectedModules = 'Please select a module';
+    if (formData.selectedModules.length > 1) newErrors.selectedModules = 'Please select only one module';
 
     return newErrors;
   }, [formData]);
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     
@@ -112,32 +120,89 @@ const CoursesPage = () => {
       return;
     }
 
-    const emailContent = `
-      GOSPEL MEDICAL MISSIONARY EVANGELISM TRAINING - REGISTRATION FORM
-      
-      PERSONAL DETAILS:
-      First Name: ${formData.firstName}
-      Other Names: ${formData.otherNames}
-      Gender: ${formData.gender}
-      Year of Birth: ${formData.yearOfBirth}
-      Email: ${formData.email}
-      Phone Number: ${formData.phoneNumber}
-      Other Number: ${formData.otherNumber}
-      Home Address: ${formData.homeAddress}
-      City: ${formData.city}
-      Country: ${formData.country}
-      Religion: ${formData.religion}
-      Church: ${formData.church}
-      Duration of Membership: ${formData.membershipDuration}
-      
-      SELECTED MODULES:
-      ${formData.selectedModules.join(', ')}
-    `;
+    try {
+      // Map selected module to expected course cost in KES
+      const selected = formData.selectedModules[0];
+      const moduleCostMap = {
+        'Module One': 10000,
+        'Module Two': 30000,
+        'Module Three': 20000
+      };
+      const targetCost = moduleCostMap[selected];
+      if (!targetCost) {
+        alert('Unable to determine selected course. Please try again later.');
+        return;
+      }
 
-    const mailtoLink = `mailto:applications@gemsofinsight.com?subject=Medical Missionary Training Registration&body=${encodeURIComponent(emailContent)}`;
-    window.location.href = mailtoLink;
+      // Fetch courses and find a course with matching cost
+      const data = await apiService.courses.listCourses();
+      const list = Array.isArray(data?.courses) ? data.courses : [];
+      
+      // Find any available course (since we don't have specific course mapping)
+      const targetCourse = list.find(c => Number(c.cost) === Number(targetCost)) || list[0];
+      if (!targetCourse) {
+        alert('No courses are currently available. Please try again later.');
+        return;
+      }
 
-    alert('Registration form will be sent via email. Please make the KES 1,500 registration fee payment after submitting.');
+      console.log('Enrolling in course:', targetCourse.title, 'with cost:', targetCourse.cost);
+
+      // Enroll via backend (requires auth token)
+      const payload = {
+        name: `${formData.firstName} ${formData.otherNames}`.trim(),
+        email: formData.email,
+        phone: formData.phoneNumber
+      };
+      const res = await apiService.courses.enrollInCourse(targetCourse.id, payload);
+      
+      // Store enrollment data for admin panel
+      const enrollmentData = {
+        id: Date.now(), // Generate unique ID
+        enrollment_id: res?.enrollment_id || Date.now(),
+        course_id: targetCourse.id,
+        course_title: targetCourse.title,
+        student: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        created_at: new Date().toISOString(),
+        status: 'active',
+        // Additional enrollment details
+        firstName: formData.firstName,
+        otherNames: formData.otherNames,
+        gender: formData.gender,
+        yearOfBirth: formData.yearOfBirth,
+        otherNumber: formData.otherNumber,
+        homeAddress: formData.homeAddress,
+        city: formData.city,
+        country: formData.country,
+        church: formData.church,
+        membershipDuration: formData.membershipDuration,
+        selectedModule: formData.selectedModules[0],
+        courseCost: targetCourse.cost
+      };
+      
+      // Get existing enrollments and add new one
+      const existingEnrollments = localStorage.getItem('courseEnrollments');
+      let allEnrollments = [];
+      
+      if (existingEnrollments) {
+        try {
+          allEnrollments = JSON.parse(existingEnrollments);
+        } catch (e) {
+          console.error('Error parsing existing enrollments:', e);
+        }
+      }
+      
+      allEnrollments.push(enrollmentData);
+      localStorage.setItem('courseEnrollments', JSON.stringify(allEnrollments));
+      
+      console.log('Stored enrollment data:', enrollmentData);
+      alert(res?.message || 'Enrolled successfully!');
+    } catch (err) {
+      console.error('Course enrollment failed:', err);
+      const msg = typeof err === 'string' ? err : err?.detail || err?.message || 'Enrollment failed. Please ensure you are logged in.';
+      alert(msg);
+    }
   }, [formData, validateForm]);
 
   // Simplified animation variants for better performance
@@ -191,6 +256,12 @@ const CoursesPage = () => {
                     loading={index === 0 ? "eager" : "lazy"}
                     onError={(e) => {
                       e.target.src = image.fallback;
+                    }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
                     }}
                   />
                   <div className="image-overlay">
@@ -506,16 +577,6 @@ const CoursesPage = () => {
 
                   <div className="form-row">
                     <div className="form-group">
-                      <label>Religion</label>
-                      <input
-                        type="text"
-                        name="religion"
-                        value={formData.religion}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    
-                    <div className="form-group">
                       <label>Church</label>
                       <input
                         type="text"
@@ -765,6 +826,11 @@ const CoursesPage = () => {
               <p>For more information, contact us at <strong>0794491920</strong> or <strong>info@gemsofinsight.com</strong></p>
             </div>
           </div>
+        </motion.section>
+
+        {/* Test Section - Remove this after testing */}
+        <motion.section className="test-section" variants={itemVariants}>
+          <CourseEnrollmentTest />
         </motion.section>
       </div>
     </motion.div>

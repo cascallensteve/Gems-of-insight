@@ -166,6 +166,16 @@
   transform: scale(1.1);
 }
 
+.best-seller-card .action-btn.view-details {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.best-seller-card .action-btn.view-details:hover {
+  background: #8FBC8F;
+  color: white;
+}
+
 .best-seller-card .product-info {
   padding: 15px;
   text-align: center;

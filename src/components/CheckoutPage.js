@@ -1,37 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { initiateMpesaPayment, checkPaymentStatus } from '../services/api';
+import { createOrder, initiateMpesaPayment, checkPaymentStatus } from '../services/api';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
   const { currentUser } = useAuth();
   const { cartItems, getCartTotal, clearCart } = useCart();
-
-  // Function to get orders from localStorage
-  const getLocalOrders = () => {
-    const orders = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('order_')) {
-        try {
-          const order = JSON.parse(localStorage.getItem(key));
-          orders.push(order);
-        } catch (error) {
-          console.error('Error parsing order:', error);
-        }
-      }
-    }
-    return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  };
-
-  // Log local orders on component mount
-  useEffect(() => {
-    const orders = getLocalOrders();
-    if (orders.length > 0) {
-      console.log('Local orders found:', orders);
-    }
-  }, []);
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
@@ -134,13 +109,8 @@ const CheckoutPage = () => {
 
     setLoading(true);
     try {
-      // Generate a local order ID since the backend doesn't have order creation
-      const newOrderId = `ORD-${Date.now()}`;
-      setOrderId(newOrderId);
-
-      // Prepare order data for local storage (optional)
+      // Create order
       const orderData = {
-        orderId: newOrderId,
         items: cartItems.map(item => ({
           productId: item.id,
           name: item.name,
@@ -152,15 +122,14 @@ const CheckoutPage = () => {
         subtotal,
         shippingCost,
         tax,
-        total: Math.round(total * 100) / 100, // Round to 2 decimal places
-        createdAt: new Date().toISOString(),
-        status: 'pending_payment'
+        total: Math.round(total * 100) / 100 // Round to 2 decimal places
       };
 
-      // Store order data locally (optional)
-      localStorage.setItem(`order_${newOrderId}`, JSON.stringify(orderData));
+      const orderResponse = await createOrder(orderData);
+      const newOrderId = orderResponse.orderId || `ORD-${Date.now()}`;
+      setOrderId(newOrderId);
 
-      // Initiate M-Pesa payment
+      // Initiate M-Pesa payment (only payment method available)
       const formattedPhone = formatPhoneNumber(mpesaPhone);
       const paymentData = {
         phoneNumber: formattedPhone,
@@ -170,32 +139,39 @@ const CheckoutPage = () => {
         transactionDesc: `Payment for order ${newOrderId}`
       };
 
-      console.log('Initiating M-Pesa payment with data:', paymentData);
-      console.log('Sending request to:', 'https://gems-of-truth.vercel.app/payments/pay');
-      
       const paymentResponse = await initiateMpesaPayment(paymentData);
-      console.log('M-Pesa payment response:', paymentResponse);
       
       if (paymentResponse.success) {
-        // Show success message with M-Pesa instructions
-        console.log('M-Pesa payment initiated successfully:', paymentResponse);
-        
-        // Show pending status first, then complete after a short delay
         setPaymentStatus('pending');
         setOrderPlaced(true);
         clearCart();
         
-        // Since we don't have real-time status checking, we'll show a success message
-        // and instruct the user to check their M-Pesa messages
+        // Check payment status periodically
+        const checkInterval = setInterval(async () => {
+          try {
+            const statusResponse = await checkPaymentStatus(paymentResponse.checkoutRequestId);
+            
+            if (statusResponse.resultCode === '0') {
+              setPaymentStatus('completed');
+              clearInterval(checkInterval);
+            } else if (statusResponse.resultCode && statusResponse.resultCode !== '0') {
+              setPaymentStatus('failed');
+              clearInterval(checkInterval);
+            }
+          } catch (error) {
+            console.error('Error checking payment status:', error);
+          }
+        }, 5000);
+
+        // Stop checking after 5 minutes
         setTimeout(() => {
-          setPaymentStatus('completed');
-          // Update order status in localStorage
-          const updatedOrderData = { ...orderData, status: 'payment_completed' };
-          localStorage.setItem(`order_${newOrderId}`, JSON.stringify(updatedOrderData));
-        }, 3000);
+          clearInterval(checkInterval);
+          if (paymentStatus === 'pending') {
+            setPaymentStatus('timeout');
+          }
+        }, 300000);
       } else {
-        console.error('M-Pesa payment failed:', paymentResponse);
-        throw new Error(`Payment initiation failed. Response Code: ${paymentResponse.responseCode}, Description: ${paymentResponse.responseDescription || 'Unknown error'}`);
+        throw new Error(paymentResponse.message || 'Payment initiation failed');
       }
     } catch (error) {
       console.error('Order placement error:', error);
@@ -225,7 +201,7 @@ const CheckoutPage = () => {
             
             <p>
               {paymentStatus === 'completed' ? 
-                `Your order #${orderId} has been placed successfully! M-Pesa payment request sent to ${mpesaPhone}.` :
+                `Your order #${orderId} has been confirmed and payment received.` :
                paymentStatus === 'failed' ?
                 'Your payment was not successful. Please try again or contact support.' :
                paymentStatus === 'timeout' ?
@@ -268,20 +244,15 @@ const CheckoutPage = () => {
 
             {paymentStatus === 'completed' && (
               <div className="mpesa-instructions">
-                <h3>✅ M-Pesa Payment Request Completed!</h3>
-                <div className="payment-success">
-                  <div className="success-icon">✅</div>
-                  <p>Your M-Pesa payment request has been successfully sent to <strong>{mpesaPhone}</strong></p>
-                  <p>Please check your phone and complete the payment when prompted.</p>
-                </div>
-                <div className="payment-details">
-                  <p><strong>Amount:</strong> KSH {total.toLocaleString()}</p>
-                  <p><strong>Order ID:</strong> {orderId}</p>
-                  <p><strong>Reference:</strong> {orderId}</p>
-                  <p><strong>Status:</strong> Payment request sent successfully</p>
-                </div>
-                <div className="payment-reminder">
-                  <p><strong>⚠️ Important:</strong> Complete the payment on your phone within 5 minutes to avoid expiration.</p>
+                <h3>Complete your M-Pesa Payment</h3>
+                <ol>
+                  <li>Check your phone for M-Pesa payment request</li>
+                  <li>Enter your M-Pesa PIN to complete payment</li>
+                  <li>You'll receive a confirmation SMS</li>
+                </ol>
+                <div className="payment-status">
+                  <div className="status-indicator pending"></div>
+                  Waiting for payment confirmation...
                 </div>
               </div>
             )}
@@ -292,57 +263,20 @@ const CheckoutPage = () => {
               <p><strong>Total Amount:</strong> KSH {total.toLocaleString()}</p>
               <p><strong>Payment Method:</strong> M-Pesa Mobile Money</p>
               <p><strong>Delivery Address:</strong> {shippingInfo.address}, {shippingInfo.city}</p>
-              <p><strong>Note:</strong> Order details are stored locally. You can view them in your browser's local storage.</p>
             </div>
 
             <div className="success-actions">
               <button 
                 className="primary-btn" 
-                onClick={() => {
-                  const orders = getLocalOrders();
-                  const orderDataStr = JSON.stringify(orders, null, 2);
-                  const blob = new Blob([orderDataStr], { type: 'application/json' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `orders_${new Date().toISOString().split('T')[0]}.json`;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  URL.revokeObjectURL(url);
-                }}
+                onClick={() => window.location.href = '/orders'}
               >
-                Download Order Details
+                View My Orders
               </button>
               <button 
                 className="secondary-btn" 
                 onClick={() => window.location.href = '/shop'}
               >
                 Continue Shopping
-              </button>
-              <button 
-                className="test-btn" 
-                onClick={async () => {
-                  try {
-                    console.log('Testing M-Pesa API endpoint...');
-                    const testResponse = await fetch('https://gems-of-truth.vercel.app/payments/pay', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        phone: '254112907003',
-                        amount: 1
-                      })
-                    });
-                    const testData = await testResponse.json();
-                    console.log('M-Pesa API test response:', testData);
-                    alert(`M-Pesa API Test Result:\nResponse Code: ${testData.ResponseCode}\nMessage: ${testData.CustomerMessage}`);
-                  } catch (error) {
-                    console.error('M-Pesa API test failed:', error);
-                    alert('M-Pesa API test failed: ' + error.message);
-                  }
-                }}
-              >
-                Test M-Pesa API
               </button>
             </div>
           </div>

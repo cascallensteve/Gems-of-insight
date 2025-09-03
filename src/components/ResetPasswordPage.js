@@ -172,6 +172,7 @@ const ResetPasswordPage = () => {
           </p>
         </div>
       </div>
+
     </div>
   );
 };

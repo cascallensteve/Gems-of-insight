@@ -12,7 +12,7 @@ const Hero = () => {
   const slides = [
     {
       id: 1,
-      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753883467/happy-woman-using-natural-face-mask_amxrvi.webp",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1756902519/happy_woman_z0cpbb.webp",
       title: "Premium Natural Remedies",
       description: "Discover our collection of organic herbal solutions",
       cta: "Shop Now"
@@ -22,11 +22,11 @@ const Hero = () => {
       image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1753870920/background_wam447.webp",
       title: "Gems of Insight classes ",
       description: "Get Skills! Stay Healthy",
-      cta: "Join classes"
+      cta: "Join  our weeklyclasses"
     },
     {
       id: 3,
-      image: "https://res.cloudinary.com/djksfayfu/image/upload/v1753445611/pregnant-woman-receiving-bottle-pills-from-specialist-cure-disease-healthcare-physician-giving-prescription-treatment-medicine-patient-with-pregnancy-medical-office_qxkcps.jpg",
+      image: "https://res.cloudinary.com/dqvsjtkqw/image/upload/v1756902724/beatuful_woman_dez_u6iive.webp",
       title: "Expert Consultations",
       description: "Personalized wellness advice from our specialists",
       cta: "Book Now"

@@ -16,19 +16,25 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
   const [editingPost, setEditingPost] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [domReady, setDomReady] = useState(false);
+  const [portalTarget, setPortalTarget] = useState(null);
 
   const [postForm, setPostForm] = useState({
     title: '',
     description: '',
     body: '',
     read_time: '',
-    tag_list: ''
+    tag_list: '',
+    photo: ''
   });
 
   useEffect(() => {
     fetchPosts();
     // Ensure DOM is ready for portals
     setDomReady(true);
+    if (typeof document !== 'undefined') {
+      const target = document.getElementById('modal-root') || document.body;
+      setPortalTarget(target && target.nodeType === 1 ? target : null);
+    }
   }, []);
 
   const fetchPosts = async () => {
@@ -88,7 +94,8 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
       description: post.description || '',
       body: post.body || '',
       read_time: post.read_time || '',
-      tag_list: post.tag_list || ''
+      tag_list: post.tag_list || '',
+      photo: post.photo || ''
     });
     setShowPostModal(true);
   };
@@ -114,7 +121,8 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
       description: '',
       body: '',
       read_time: '',
-      tag_list: ''
+      tag_list: '',
+      photo: ''
     });
     setEditingPost(null);
     setShowPostModal(false);
@@ -269,7 +277,7 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
       </div>
 
       {/* Post Modal - Render outside admin layout using Portal */}
-      {showPostModal && domReady && typeof document !== 'undefined' && document.body && createPortal(
+      {showPostModal && domReady && portalTarget && createPortal(
         <div 
           className="modal-overlay blog-modal-overlay" 
           onClick={() => !submitting && resetPostForm()}
@@ -376,6 +384,19 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
                 </div>
               </div>
 
+              <div className="form-group">
+                <label>Featured Image URL</label>
+                <input
+                  type="url"
+                  name="photo"
+                  value={postForm.photo}
+                  onChange={handleInputChange}
+                  placeholder="https://res.cloudinary.com/.../your-image.jpg"
+                  disabled={submitting}
+                />
+                <small>Paste your Cloudinary image URL here</small>
+              </div>
+
               <div className="form-actions">
                 <button 
                   type="button" 
@@ -403,11 +424,11 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
             </form>
           </div>
         </div>,
-        document.body
+        portalTarget
       )}
 
       {/* Fallback Modal Rendering - if portal fails */}
-      {showPostModal && (!domReady || typeof document === 'undefined' || !document.body) && (
+      {showPostModal && (!domReady || !portalTarget) && (
         <div 
           className="modal-overlay blog-modal-overlay" 
           onClick={() => !submitting && resetPostForm()}
@@ -544,7 +565,7 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
       )}
 
       {/* View Post Modal */}
-      {showViewModal && viewingPost && domReady && typeof document !== 'undefined' && document.body && createPortal(
+      {showViewModal && viewingPost && domReady && portalTarget && createPortal(
         <div 
           className="modal-overlay view-modal-overlay" 
           onClick={() => setShowViewModal(false)}
@@ -642,7 +663,8 @@ const AdminBlogManager = ({ user, onNavigateBack }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        portalTarget
       )}
     </div>
   );

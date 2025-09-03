@@ -13,7 +13,7 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+
   const [expandedCategories, setExpandedCategories] = useState([]);
   
   const cartCount = getCartCount();
@@ -107,17 +107,11 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
     navigate(path);
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
-    setMobileShopOpen(false);
     setExpandedCategories([]);
     document.body.classList.remove('mobile-menu-open');
   };
 
-  const toggleMobileShop = () => {
-    setMobileShopOpen(!mobileShopOpen);
-    if (!mobileShopOpen) {
-      setExpandedCategories([]); // Reset expanded categories when opening
-    }
-  };
+
 
   const toggleCategory = (categoryTitle) => {
     setExpandedCategories(prev => 
@@ -211,7 +205,7 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
           {/* Logo */}
           <div className="navbar-logo" onClick={() => handleNavClick('/')}>
             <img 
-              src="/images/Gems_of_insight_logo_ghxcbv (1).png" 
+              src="/images/Gems_of_insight_logo_ghxcbv (1).png"
               alt="Gems of Insight Logo" 
               className="logo-image"
             />
@@ -225,6 +219,8 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
               <span></span>
             </div>
           </button>
+
+          {/* Removed duplicate mobile navigation links to avoid double rendering on mobile */}
 
           {/* Desktop Navigation Links */}
           <ul className={`navbar-menu ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
@@ -246,78 +242,6 @@ const Navbar = ({ openAppointmentModal, openCart }) => {
               >
                 Shop
               </button>
-              
-              {/* Mobile: Dropdown menu */}
-              <div className="mobile-only">
-                <button 
-                  className={`navbar-link mobile-shop-toggle ${mobileShopOpen ? 'active' : ''}`}
-                  onClick={toggleMobileShop}
-                >
-                  Shop
-                  <svg 
-                    width="12" 
-                    height="12" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    className={`dropdown-chevron ${mobileShopOpen ? 'open' : ''}`}
-                    style={{ marginLeft: '8px', transition: 'transform 0.3s ease' }}
-                  >
-                    <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                
-                {/* Mobile Shop Categories Dropdown */}
-                {mobileShopOpen && (
-                  <div className="mobile-shop-dropdown">
-                    <div className="mobile-shop-header">
-                      <button 
-                        className="view-all-shop"
-                        onClick={() => handleNavClick('/shop')}
-                      >
-                        View All Products
-                      </button>
-                    </div>
-                    
-                    <div className="mobile-categories">
-                      {shopCategories.map((category, index) => (
-                        <div key={index} className="mobile-category">
-                          <button
-                            className="category-button"
-                            onClick={() => handleNavClick(category.path)}
-                          >
-                            <span className="category-title">{category.title}</span>
-                            {category.subcategories && (
-                              <svg 
-                                width="14" 
-                                height="14" 
-                                viewBox="0 0 24 24" 
-                                fill="none"
-                                className="arrow-right"
-                              >
-                                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            )}
-                          </button>
-                          
-                          {category.subcategories && (
-                            <div className="subcategories-list">
-                              {category.subcategories.map((sub, subIndex) => (
-                                <button
-                                  key={subIndex}
-                                  className="subcategory-item"
-                                  onClick={() => handleNavClick(sub.path)}
-                                >
-                                  {sub.title}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </li>
             
             <li className="navbar-item">

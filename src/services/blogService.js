@@ -144,6 +144,7 @@ export const blogService = {
       tag_list: Array.isArray(formData.tags) 
         ? formData.tags.join(' ')
         : formData.tag_list?.trim() || '',
+      photo: formData.photo?.trim() || ''
     };
   },
 

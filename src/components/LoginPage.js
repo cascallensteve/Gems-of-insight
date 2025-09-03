@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 import '../styles/forms.css';
 import apiService from '../services/api';
@@ -7,7 +6,6 @@ import { useAuth } from '../context/AuthContext';
 import TermsPage from './TermsPage';
 
 const LoginPage = ({ onLogin, onClose }) => {
-  // const navigate = useNavigate(); // Commented out as it's not used currently
   const { login } = useAuth();
   const [authMode, setAuthMode] = useState('login'); // 'login', 'signup', 'forgot', 'reset'
   const [formData, setFormData] = useState({
@@ -72,20 +70,12 @@ const LoginPage = ({ onLogin, onClose }) => {
   };
 
   const handleGoogleAuth = () => {
-    // Google OAuth implementation
     const googleAuthUrl = 'https://gems-of-truth.vercel.app/auth/google';
     window.location.href = googleAuthUrl;
   };
 
-
-
-  const openTerms = () => {
-    setShowTerms(true);
-  };
-
-  const closeTerms = () => {
-    setShowTerms(false);
-  };
+  const openTerms = () => setShowTerms(true);
+  const closeTerms = () => setShowTerms(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -98,7 +88,7 @@ const LoginPage = ({ onLogin, onClose }) => {
       }
     }
 
-    if (authMode === 'login' || authMode === 'reset') {
+    if (authMode !== 'forgot') {
       if (!formData.password) {
         newErrors.password = 'Password is required';
       } else if (formData.password.length < 6) {
@@ -109,12 +99,6 @@ const LoginPage = ({ onLogin, onClose }) => {
     if (authMode === 'signup') {
       if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
       if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-
-      if (!formData.password) {
-        newErrors.password = 'Password is required';
-      } else if (formData.password.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
-      }
 
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
@@ -131,7 +115,6 @@ const LoginPage = ({ onLogin, onClose }) => {
       } else if (formData.resetToken.trim().length < 6) {
         newErrors.resetToken = 'Reset token must be at least 6 characters';
       }
-      
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
@@ -160,10 +143,8 @@ const LoginPage = ({ onLogin, onClose }) => {
     try {
       switch (authMode) {
         case 'login':
-          // Use the API service for login
           const loginData = await apiService.auth.login(formData.email.trim(), formData.password);
           
-          // Ensure user data has the correct structure
           const userDataForLogin = {
             ...loginData,
             firstName: loginData.firstName || loginData.first_name || loginData.name?.split(' ')[0] || 'User',
@@ -174,21 +155,17 @@ const LoginPage = ({ onLogin, onClose }) => {
             id: loginData.id || loginData.user_id
           };
           
-          // Use AuthContext login function
           login(userDataForLogin, loginData.token || loginData.access_token);
           showSuccessMessage(`Welcome back! Redirecting to home page...`);
           
           setTimeout(() => {
             if (onLogin) onLogin(userDataForLogin);
             if (onClose) onClose();
-            else {
-              window.location.href = '/';
-            }
+            else window.location.href = '/';
           }, 1000);
           break;
 
         case 'signup':
-          // Use the API service for signup
           const signupPayload = {
             first_name: formData.firstName.trim(),
             last_name: formData.lastName.trim(),
@@ -196,9 +173,8 @@ const LoginPage = ({ onLogin, onClose }) => {
             password: formData.password
           };
           
-          const signupResponse = await apiService.auth.signUp(signupPayload);
+          await apiService.auth.signUp(signupPayload);
           
-          // Store signup data for later use after email verification
           const signupData = {
             firstName: formData.firstName.trim(),
             lastName: formData.lastName.trim(),
@@ -220,20 +196,10 @@ const LoginPage = ({ onLogin, onClose }) => {
 
         case 'forgot':
           await apiService.auth.forgotPassword(formData.email.trim());
-          showSuccessMessage('Password reset token sent to your email! Check your inbox for a token like "X40Q4J14" and enter it below.');
+          showSuccessMessage('Password reset link sent to your email. Please check your inbox.');
           
-          // Switch to reset mode to allow user to enter the token and new password
           setTimeout(() => {
-            setAuthMode('reset');
-            setFormData({
-              firstName: '',
-              lastName: '',
-              email: formData.email, // Keep the email for reset
-              password: '',
-              confirmPassword: '',
-              resetToken: '',
-              terms: false
-            });
+            switchAuthMode('login');
           }, 3000);
           break;
 
@@ -246,16 +212,7 @@ const LoginPage = ({ onLogin, onClose }) => {
           showSuccessMessage('Password reset successful! You can now login with your new password.');
           
           setTimeout(() => {
-            setAuthMode('login');
-            setFormData({
-              firstName: '',
-              lastName: '',
-              email: '',
-              password: '',
-              confirmPassword: '',
-              resetToken: '',
-              terms: false
-            });
+            switchAuthMode('login');
           }, 2000);
           break;
 
@@ -266,13 +223,11 @@ const LoginPage = ({ onLogin, onClose }) => {
     } catch (error) {
       console.error('Authentication error:', error);
       
-      // Handle specific error cases
       if (error.email_verification_required) {
         window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}`;
         return;
       }
       
-      // Handle field-specific errors
       if (error.email && Array.isArray(error.email)) {
         setErrors({ email: error.email[0] });
       } else if (error.password && Array.isArray(error.password)) {
@@ -305,10 +260,6 @@ const LoginPage = ({ onLogin, onClose }) => {
     setShowSuccess(false);
   };
 
-  const handleBack = () => {
-    window.history.back();
-  };
-
   const getFormTitle = () => {
     switch (authMode) {
       case 'login':
@@ -333,7 +284,7 @@ const LoginPage = ({ onLogin, onClose }) => {
       case 'forgot':
         return 'Enter your email to receive a password reset link';
       case 'reset':
-        return 'Enter the reset token from your email (e.g., X40Q4J14) and your new password';
+        return 'Enter your new password below';
       default:
         return '';
     }
@@ -342,75 +293,57 @@ const LoginPage = ({ onLogin, onClose }) => {
   const getSubmitButtonText = () => {
     if (loading) {
       switch (authMode) {
-        case 'login':
-          return 'Logging in...';
-        case 'signup':
-          return 'Creating Account...';
-        case 'forgot':
-          return 'Sending Reset Link...';
-        case 'reset':
-          return 'Resetting Password...';
-        default:
-          return 'Processing...';
+        case 'login': return 'Logging in...';
+        case 'signup': return 'Creating Account...';
+        case 'forgot': return 'Sending Reset Link...';
+        case 'reset': return 'Resetting Password...';
+        default: return 'Processing...';
       }
     }
 
     switch (authMode) {
-      case 'login':
-        return 'Login';
-      case 'signup':
-        return 'Sign Up';
-      case 'forgot':
-        return 'Send Reset Link';
-      case 'reset':
-        return 'Reset Password';
-      default:
-        return 'Submit';
+      case 'login': return 'Login';
+      case 'signup': return 'Sign Up';
+      case 'forgot': return 'Send Reset Link';
+      case 'reset': return 'Reset Password';
+      default: return 'Submit';
     }
   };
 
   return (
     <>
       <div className="login-page-overlay">
-    <div className="login-page">
-      {/* Success Message Overlay */}
-      {showSuccess && (
-        <div className="success-overlay">
-          <div className="success-message">
-            <div className="success-icon">✓</div>
-            <p>{successMessage}</p>
-          </div>
-        </div>
-      )}
-
-      <div className="login-container">
-            <button className="back-button" onClick={onClose}>← Back</button>
-
-        <div className="login-logo">
-          <img
-                src="/images/gems_of_insight_favicon_zcfwrx.png"
-            alt="Gems of Insight"
-            className="logo-image"
-          />
-        </div>
-
-        <div className="login-content">
-          {authMode === 'signup' && (
-            <div className="login-image-section">
-              <div className="image-overlay">
-                <h3>Start Your Wellness Journey</h3>
-                <p>Join thousands who trust us for their natural health needs</p>
+        <div className="login-page">
+          {/* Success Message Overlay */}
+          {showSuccess && (
+            <div className="success-overlay">
+              <div className="success-message">
+                <div className="success-icon">✓</div>
+                <p>{successMessage}</p>
               </div>
             </div>
           )}
 
-          <div className="login-form-section">
-            <div className="form-header">
-              <h1>{getFormTitle()}</h1>
-              <p>{getFormSubtitle()}</p>
-            </div>
+          <div className="login-container">
+            <div className="login-content">
+              <div className="login-illustration" aria-hidden="true"></div>
+              <div className="login-form-wrapper">
+                <button className="back-button" onClick={onClose}>← Back</button>
 
-            <form className="login-form" onSubmit={handleSubmit}>
+                <div className="login-logo">
+                  <img
+                    src="/images/LOGOGEMS.png"
+                    alt="Gems of Insight"
+                    className="logo-image"
+                  />
+                </div>
+
+                <div className="form-header">
+                  <h1>{getFormTitle()}</h1>
+                  <p>{getFormSubtitle()}</p>
+                </div>
+
+                <form className="login-form" onSubmit={handleSubmit}>
               {/* Signup Fields */}
               {authMode === 'signup' && (
                 <>
@@ -444,16 +377,16 @@ const LoginPage = ({ onLogin, onClose }) => {
                 </>
               )}
 
-                  {/* Email Field */}
+              {/* Email Field */}
               {authMode !== 'reset' && (
                 <div className="form-group with-icon">
                   <label>Email Address</label>
-                      <div className="form-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                  <div className="form-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <input
                     type="email"
                     name="email"
@@ -467,19 +400,19 @@ const LoginPage = ({ onLogin, onClose }) => {
                 </div>
               )}
 
-                  {/* Password Field */}
+              {/* Password Field */}
               {authMode !== 'forgot' && (
                 <div className="form-group with-icon">
                   <label>Password</label>
-                      <div className="form-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <circle cx="12" cy="16" r="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                  <div className="form-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="16" r="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <input
-                        type={showPassword ? "text" : "password"}
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder={authMode === 'reset' ? 'Enter your new password' : 'Enter your password'}
                     value={formData.password}
@@ -487,64 +420,40 @@ const LoginPage = ({ onLogin, onClose }) => {
                     className={`form-input ${errors.password ? 'error' : ''}`}
                     required
                   />
-                      <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </button>
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </button>
                   {errors.password && <div className="error-message">{errors.password}</div>}
                 </div>
               )}
 
-                  {/* Reset Token Field (for reset mode only) */}
-              {authMode === 'reset' && (
-                <div className="form-group with-icon">
-                  <label>Reset Token</label>
-                      <div className="form-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                  <input
-                    type="text"
-                    name="resetToken"
-                    placeholder="Enter reset token (e.g., X40Q4J14)"
-                    value={formData.resetToken}
-                    onChange={handleInputChange}
-                    className={`form-input ${errors.resetToken ? 'error' : ''}`}
-                    required
-                  />
-                  {errors.resetToken && <div className="error-message">{errors.resetToken}</div>}
-                </div>
-              )}
-
-                  {/* Confirm Password Field */}
+              {/* Confirm Password Field */}
               {(authMode === 'signup' || authMode === 'reset') && (
                 <div className="form-group with-icon">
                   <label>Confirm Password</label>
-                      <div className="form-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <circle cx="12" cy="16" r="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                  <div className="form-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="16" r="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <input
-                        type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
@@ -552,23 +461,23 @@ const LoginPage = ({ onLogin, onClose }) => {
                     className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
                     required
                   />
-                      <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </button>
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </button>
                   {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                 </div>
               )}
@@ -585,7 +494,7 @@ const LoginPage = ({ onLogin, onClose }) => {
                     className={errors.terms ? 'error' : ''}
                   />
                   <label htmlFor="terms">
-                        I agree to the <button type="button" className="terms-link" onClick={openTerms}>Terms & Conditions</button>
+                    I agree to the <button type="button" className="terms-link" onClick={openTerms}>Terms & Conditions</button>
                   </label>
                   {errors.terms && <div className="error-message">{errors.terms}</div>}
                 </div>
@@ -602,13 +511,6 @@ const LoginPage = ({ onLogin, onClose }) => {
                   >
                     Forgot your password?
                   </button>
-                  <button 
-                    type="button"
-                    className="reset-password-link"
-                    onClick={() => switchAuthMode('reset')}
-                  >
-                    Have a reset token?
-                  </button>
                 </div>
               )}
 
@@ -621,16 +523,16 @@ const LoginPage = ({ onLogin, onClose }) => {
               >
                 {getSubmitButtonText()}
               </button>
-            </form>
+                </form>
 
-            {/* Auth Mode Toggle Links */}
-            <div className="form-footer">
+                {/* Auth Mode Toggle Links */}
+                <div className="form-footer">
               {authMode === 'login' && (
                 <p>
                   Don't have an account? 
                   <button 
                     className="toggle-auth" 
-                        onClick={() => setAuthMode('signup')}
+                    onClick={() => setAuthMode('signup')}
                   >
                     Sign Up
                   </button>
@@ -642,7 +544,7 @@ const LoginPage = ({ onLogin, onClose }) => {
                   Already have an account? 
                   <button 
                     className="toggle-auth" 
-                        onClick={() => setAuthMode('login')}
+                    onClick={() => setAuthMode('login')}
                   >
                     Login
                   </button>
@@ -654,7 +556,7 @@ const LoginPage = ({ onLogin, onClose }) => {
                   Remember your password? 
                   <button 
                     className="toggle-auth" 
-                        onClick={() => setAuthMode('login')}
+                    onClick={() => setAuthMode('login')}
                   >
                     Back to Login
                   </button>
@@ -666,7 +568,7 @@ const LoginPage = ({ onLogin, onClose }) => {
                   Want to login instead? 
                   <button 
                     className="toggle-auth" 
-                        onClick={() => setAuthMode('login')}
+                    onClick={() => setAuthMode('login')}
                   >
                     Login
                   </button>
@@ -674,7 +576,7 @@ const LoginPage = ({ onLogin, onClose }) => {
               )}
                 </div>
 
-                {/* Google Auth Button - Now below the toggle links */}
+                {/* Google Auth Button - Below the toggle links */}
                 {(authMode === 'login' || authMode === 'signup') && (
                   <>
                     <div className="divider">

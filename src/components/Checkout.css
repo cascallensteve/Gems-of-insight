@@ -15,8 +15,8 @@
 .checkout-modal {
   background: white;
   border-radius: 20px;
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
+  max-width: 1000px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -222,7 +222,7 @@
 
 .shipping-summary {
   background: linear-gradient(135deg, #e8f5e8, #f0fbf0);
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
   margin-bottom: 25px;
   border: 1px solid var(--light-green);
@@ -235,7 +235,7 @@
 }
 
 .shipping-summary p {
-  margin: 3px 0;
+  margin: 4px 0;
   color: #555;
 }
 

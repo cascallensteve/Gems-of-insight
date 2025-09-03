@@ -154,9 +154,9 @@
 
 .stat-card__icon.pending { background: linear-gradient(135deg, #ffc107, #ffb300); }
 .stat-card__icon.confirmed { background: linear-gradient(135deg, #28a745, #20c997); }
-.stat-card__icon.completed { background: linear-gradient(135deg, #17a2b8, #20c997); }
+.stat-card__icon.completed { background: linear-gradient(135deg, #048804, #3ea385); }
 .stat-card__icon.cancelled { background: linear-gradient(135deg, #dc3545, #e83e8c); }
-.stat-card__icon.total { background: linear-gradient(135deg, #6b8e23, #8fbc8f); }
+.stat-card__icon.total { background: linear-gradient(135deg, #6b8e23, #0a110a); }
 
 /* Controls Section */
 .appointments-controls {
@@ -660,7 +660,6 @@
     padding: 12px 8px;
   }
 }
-
 /* PDF Download Button Styles */
 .btn-info {
   background: linear-gradient(135deg, #17a2b8, #138496);

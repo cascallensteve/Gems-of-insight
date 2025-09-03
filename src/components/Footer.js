@@ -227,13 +227,10 @@ const Footer = () => {
           <div className="copyright-content">
             <p>&copy; 2024 Gems of Insight. All rights reserved.</p>
             <div className="footer-legal">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Terms & Conditions</Link>
-              <Link to="/disclaimer">Medical Disclaimer</Link>
-              <Link to="/refund">Refund Policy</Link>
-            </div>
-            <div className="powered-by">
-              <span>Powered by <strong>Technova</strong></span>
+                          <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms & Conditions</Link>
+            <Link to="/disclaimer">Medical Disclaimer</Link>
+            <Link to="/refund">Refund Policy</Link>
             </div>
           </div>
         </div>

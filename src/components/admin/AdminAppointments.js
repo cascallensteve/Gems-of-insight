@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaCalendar, FaClock, FaUser, FaPhone, FaEnvelope, FaStickyNote, FaCheck, FaTimes, FaEye, FaFilter, FaDownload, FaFilePdf, FaFileAlt, FaTrash } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
+import pdfService from '../../services/pdfService';
 import './AdminAppointments.css';
 
 const AdminAppointments = () => {
@@ -256,6 +257,87 @@ const AdminAppointments = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  // Download individual appointment as PDF
+  const downloadAppointmentPDF = (appointment) => {
+    try {
+      pdfService.downloadAppointmentPDF(appointment);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
+  // Download all appointments as PDF
+  const downloadAllAppointmentsPDF = () => {
+    console.log('📄 Download All PDF clicked');
+    console.log('📊 Filtered appointments count:', filteredAppointments.length);
+    console.log('📋 Appointments data:', filteredAppointments);
+    
+    if (filteredAppointments.length === 0) {
+      alert('No appointments to download');
+      return;
+    }
+    
+    try {
+      const title = filter === 'all' ? 'All Appointments' : `${filter.charAt(0).toUpperCase() + filter.slice(1)} Appointments`;
+      console.log('📄 Generating PDF with title:', title);
+      pdfService.downloadAppointmentsListPDF(filteredAppointments, title);
+      console.log('✅ PDF generation completed');
+    } catch (error) {
+      console.error('❌ Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
+  // Download filtered appointments as PDF
+  const downloadFilteredAppointmentsPDF = () => {
+    console.log('📄 Download Filtered PDF clicked');
+    console.log('🔍 Current filter:', filter);
+    console.log('📊 Filtered appointments count:', filteredAppointments.length);
+    
+    if (filteredAppointments.length === 0) {
+      alert('No appointments to download');
+      return;
+    }
+    
+    try {
+      console.log('📄 Generating filtered PDF...');
+      pdfService.downloadFilteredAppointmentsPDF(filteredAppointments, filter);
+      console.log('✅ Filtered PDF generation completed');
+    } catch (error) {
+      console.error('❌ Error generating filtered PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
+  // Download today's appointments as PDF
+  const downloadTodayAppointmentsPDF = () => {
+    console.log('📄 Download Today\'s PDF clicked');
+    const today = new Date().toISOString().split('T')[0];
+    console.log('📅 Today\'s date:', today);
+    
+    const todayAppointments = appointments.filter(apt => 
+      apt.preferred_date === today
+    );
+    
+    console.log('📊 Today\'s appointments count:', todayAppointments.length);
+    console.log('📋 Today\'s appointments:', todayAppointments);
+    
+    if (todayAppointments.length === 0) {
+      alert('No appointments scheduled for today');
+      return;
+    }
+    
+    try {
+      console.log('📄 Generating today\'s PDF...');
+      pdfService.downloadTodayAppointmentsPDF(todayAppointments);
+      console.log('✅ Today\'s PDF generation completed');
+    } catch (error) {
+      console.error('❌ Error generating today\'s PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
   const formatTime = (time24h) => {
     const [hours, minutes] = time24h.split(':');
     const hour = parseInt(hours);
@@ -342,8 +424,25 @@ const AdminAppointments = () => {
           }}>
             🔄 Debug & Refresh
           </button>
+          <button className="btn btn-primary" onClick={downloadAllAppointmentsPDF}>
+            <FaFilePdf /> All PDF
+          </button>
+          <button className="btn btn-info" onClick={downloadFilteredAppointmentsPDF}>
+            <FaFilePdf /> Filtered PDF
+          </button>
+          <button className="btn btn-success" onClick={downloadTodayAppointmentsPDF}>
+            <FaFilePdf /> Today's PDF
+          </button>
           <button className="btn btn-secondary" onClick={exportToCSV}>
             <FaDownload /> Export CSV
+          </button>
+          <button className="btn btn-warning" onClick={() => {
+            console.log('🧪 Testing PDF Service...');
+            console.log('📊 Appointments available:', appointments.length);
+            console.log('📋 PDF Service available:', typeof pdfService);
+            console.log('📄 PDF Service methods:', Object.keys(pdfService));
+          }}>
+            🧪 Test PDF
           </button>
         </div>
       </div>
@@ -390,48 +489,35 @@ const AdminAppointments = () => {
 
       {/* Filters and Search */}
       <div className="appointments-controls">
-        <div className="appointments-controls__left">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Appointments</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-          
-          {/* Add PDF download buttons */}
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              if (filteredAppointments.length === 0) {
-                alert('No appointments to download');
-                return;
-              }
-              exportToCSV(); // Reusing exportToCSV for bulk download
-            }}
-            title="Download All Appointments as PDF"
-          >
-            <FaFileAlt /> Download All
-          </button>
-          
-          {/* Add individual PDF download button */}
-          <button
-            className="btn btn-secondary"
-            onClick={() => {
-              if (filteredAppointments.length === 0) {
-                alert('No appointments to download');
-                return;
-              }
-              exportToCSV(); // Reusing exportToCSV for bulk download
-            }}
-            title="Download Filtered Appointments as PDF"
-          >
-            <FaDownload /> Download Filtered
-          </button>
+                 <div className="appointments-controls__left">
+           <select
+             value={filter}
+             onChange={(e) => setFilter(e.target.value)}
+             className="filter-select"
+           >
+             <option value="all">All Appointments</option>
+             <option value="pending">Pending</option>
+             <option value="confirmed">Confirmed</option>
+             <option value="completed">Completed</option>
+             <option value="cancelled">Cancelled</option>
+           </select>
+           
+           {/* PDF download buttons */}
+           <button
+             className="btn btn-primary"
+             onClick={downloadAllAppointmentsPDF}
+             title="Download All Appointments as PDF"
+           >
+             <FaFilePdf /> Download All PDF
+           </button>
+           
+           <button
+             className="btn btn-secondary"
+             onClick={exportToCSV}
+             title="Download Filtered Appointments as CSV"
+           >
+             <FaDownload /> Download CSV
+           </button>
         </div>
         <div className="appointments-controls__right">
           <input
@@ -493,96 +579,22 @@ const AdminAppointments = () => {
                 </td>
                 <td>
                   <div className="action-buttons">
-                    <button
-                      className="btn btn-sm btn-outline"
-                      onClick={() => handleViewDetails(appointment)}
-                      title="View Details"
-                    >
-                      <FaEye />
-                    </button>
-                    
-                    {/* Individual PDF download button */}
-                    <button
-                      className="btn btn-sm btn-info"
-                      onClick={() => {
-                        const appointmentData = {
-                          Name: appointment.full_name,
-                          Email: appointment.email,
-                          Phone: appointment.phone_no,
-                          Health_Concern: appointment.health_concern,
-                          Date: formatDate(appointment.preferred_date),
-                          Time: formatTime(appointment.preferred_time),
-                          Status: appointment.status,
-                          Notes: appointment.additional_notes || ''
-                        };
-                        const pdfContent = `
-                          <html>
-                            <head>
-                              <title>Appointment Details</title>
-                              <style>
-                                body { font-family: Arial, sans-serif; font-size: 12px; }
-                                .detail-row { margin-bottom: 5px; }
-                                .detail-row label { font-weight: bold; display: inline-block; width: 120px; }
-                                .detail-row span { color: #333; }
-                                .notes-content { white-space: pre-wrap; }
-                              </style>
-                            </head>
-                            <body>
-                              <h2>Appointment Details</h2>
-                              <div class="detail-row">
-                                <label>Patient Name:</label>
-                                <span>${appointmentData.Name}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Email:</label>
-                                <span>${appointmentData.Email}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Phone:</label>
-                                <span>${appointmentData.Phone}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Health Concern:</label>
-                                <span>${appointmentData.Health_Concern}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Preferred Date:</label>
-                                <span>${appointmentData.Date}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Preferred Time:</label>
-                                <span>${appointmentData.Time}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Status:</label>
-                                <span>${appointmentData.Status}</span>
-                              </div>
-                              <div class="detail-row">
-                                <label>Booking Date:</label>
-                                <span>${new Date(appointment.created_at).toLocaleString()}</span>
-                              </div>
-                              ${appointmentData.Notes ? `<div class="detail-row full-width">
-                                <label>Additional Notes:</label>
-                                <div class="notes-content">
-                                  ${appointmentData.Notes}
-                                </div>
-                              </div>` : ''}
-                            </body>
-                          </html>
-                        `;
-                        const blob = new Blob([pdfContent], { type: 'text/html' });
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${appointment.full_name}_appointment.pdf`;
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                      }}
-                      title="Download as PDF"
-                    >
-                      <FaFileAlt />
-                    </button>
-                    
+                                         <button
+                       className="btn btn-sm btn-outline"
+                       onClick={() => handleViewDetails(appointment)}
+                       title="View Details"
+                     >
+                       <FaEye />
+                     </button>
+                     
+                     {/* Individual PDF download button */}
+                     <button
+                       className="btn btn-sm btn-info"
+                       onClick={() => downloadAppointmentPDF(appointment)}
+                       title="Download as PDF"
+                     >
+                       <FaFilePdf />
+                     </button>
                     {appointment.status === 'pending' && (
                       <>
                         <button
@@ -688,6 +700,15 @@ const AdminAppointments = () => {
               </div>
             </div>
             <div className="modal-footer">
+              <button 
+                className="btn btn-info"
+                onClick={() => {
+                  downloadAppointmentPDF(selectedAppointment);
+                }}
+                title="Download as PDF"
+              >
+                <FaFilePdf /> Download PDF
+              </button>
               {selectedAppointment.status === 'pending' && (
                 <>
                   <button 

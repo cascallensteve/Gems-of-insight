@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaTachometerAlt, FaBoxOpen, FaClipboardList, FaUsers, FaCog, FaSignOutAlt, FaUserCircle, FaChartLine, FaBell, FaCalendarAlt, FaBlog } from 'react-icons/fa';
+import { FaTachometerAlt, FaBoxOpen, FaClipboardList, FaUsers, FaCog, FaSignOutAlt, FaUserCircle, FaChartLine, FaBell, FaCalendarAlt, FaBlog, FaGraduationCap } from 'react-icons/fa';
 import './AdminLayout.css';
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { id: 'sales', label: 'Sales', icon: <FaChartLine /> },
   { id: 'analytics', label: 'Analytics', icon: <FaChartLine /> },
   { id: 'products', label: 'Products', icon: <FaBoxOpen /> },
+  { id: 'courses', label: 'Courses', icon: <FaGraduationCap /> },
   { id: 'orders', label: 'Orders', icon: <FaClipboardList /> },
   { id: 'users', label: 'Users', icon: <FaUsers /> },
   { id: 'blog', label: 'Blog Manager', icon: <FaBlog /> },

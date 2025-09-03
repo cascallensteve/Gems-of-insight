@@ -462,7 +462,7 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: 35px;
+  padding: 25px;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -471,7 +471,7 @@
   position: sticky;
   top: 20px;
   transition: all 0.3s ease;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
@@ -848,7 +848,6 @@
   font-size: 14px;
   line-height: 1.4;
 }
-
 @keyframes pulse {
   0% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -925,7 +924,6 @@
   background: #138496;
   transform: translateY(-2px);
 }
-
 .error-message {
   background: #ffebee;
   color: #d32f2f;

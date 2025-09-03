@@ -160,7 +160,6 @@ function AppContent() {
       
       {/* Cookie Consent */}
       <CookieConsent />
-      
       {/* Appointment Modal */}
       <AppointmentModal 
         isOpen={isAppointmentModalOpen}

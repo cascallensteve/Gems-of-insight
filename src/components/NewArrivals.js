@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import LazyLoad from 'react-lazyload';
+import QuickViewModal from './QuickViewModal';
 import './NewArrivals.css';
 
 const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
@@ -10,6 +11,9 @@ const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
   const { currentUser } = useAuth();
   const { addToCart } = useCart();
   const [cartNotification, setCartNotification] = useState({ show: false, productName: '' });
+  const [loginAlert, setLoginAlert] = useState({ show: false, message: '' });
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [showQuickView, setShowQuickView] = useState(false);
 
   const products = [
     {
@@ -128,9 +132,16 @@ const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
 
   const handleAddToCart = (product) => {
     if (!currentUser) {
-      if (window.confirm('Please login to add items to cart. Would you like to login now?')) {
-        navigate('/login');
-      }
+      // Show custom login alert
+      setLoginAlert({
+        show: true,
+        message: 'Please login to add items to cart'
+      });
+      
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        setLoginAlert({ show: false, message: '' });
+      }, 3000);
       return;
     }
 
@@ -157,12 +168,8 @@ const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
   };
 
   const handleQuickView = (product) => {
-    if (onQuickView) {
-      onQuickView(product);
-    } else {
-      // Fallback: navigate to product page
-      navigate(`/product/${product.id}`);
-    }
+    setQuickViewProduct(product);
+    setShowQuickView(true);
   };
 
   const handleProductView = (product) => {
@@ -217,12 +224,20 @@ const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
                 <span className="current-price">KSH {product.price}</span>
               </div>
 
-              <button 
-                className="add-to-cart-btn"
-                onClick={() => handleAddToCart(product)}
-              >
-                Add to Cart
-              </button>
+              <div className="product-actions-row">
+                <button 
+                  className="add-to-cart-btn"
+                  onClick={() => handleAddToCart(product)}
+                >
+                  Add to Cart
+                </button>
+                <button 
+                  className="view-details-btn"
+                  onClick={() => handleProductView(product)}
+                >
+                  View Details
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -247,6 +262,43 @@ const NewArrivals = ({ onNavigateToShop, onQuickView, onProductView }) => {
           </div>
         </div>
       )}
+
+      {/* Login Alert */}
+      {loginAlert.show && (
+        <div className="login-alert">
+          <div className="alert-content">
+            <span className="alert-icon">🔒</span>
+            <span className="alert-message">{loginAlert.message}</span>
+            <button 
+              className="login-now-btn"
+              onClick={() => navigate('/login')}
+            >
+              Login Now
+            </button>
+            <button 
+              className="close-alert-btn"
+              onClick={() => setLoginAlert({ show: false, message: '' })}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={showQuickView}
+        onClose={() => {
+          setShowQuickView(false);
+          setQuickViewProduct(null);
+        }}
+        onViewFullDetails={(product) => {
+          setShowQuickView(false);
+          setQuickViewProduct(null);
+          handleProductView(product);
+        }}
+      />
     </section>
   );
 };

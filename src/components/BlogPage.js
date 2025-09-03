@@ -10,6 +10,9 @@ const BlogPage = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState({});
+  const [newComments, setNewComments] = useState({});
+  const [submittingComments, setSubmittingComments] = useState({});
 
   // Fetch blogs on component mount
   useEffect(() => {
@@ -34,7 +37,7 @@ const BlogPage = () => {
             id: blog.id,
             title: blog.title,
             excerpt: blog.description,
-            image: getRandomImage(), // Use random image since API doesn't provide images
+            image: blog.photo || getRandomImage(),
             category: getCategoryFromTags(blog.tags),
             date: blog.timestamp,
             author: blogService.getAuthorName(blog.author),
@@ -48,6 +51,11 @@ const BlogPage = () => {
         
         console.log('BlogPage: Transformed blogs:', transformedBlogs?.length);
         setBlogPosts(transformedBlogs);
+        
+        // Load comments for each blog post
+        transformedBlogs.forEach(blog => {
+          loadCommentsForBlog(blog.id);
+        });
       } catch (error) {
         console.error('Error fetching blogs:', error);
         setError(error.message);
@@ -75,6 +83,80 @@ const BlogPage = () => {
     loadBlogPosts();
   }, []);
 
+  // Load comments for a specific blog post
+  const loadCommentsForBlog = async (blogId) => {
+    try {
+      const storedComments = localStorage.getItem(`comments_${blogId}`);
+      if (storedComments) {
+        setComments(prev => ({
+          ...prev,
+          [blogId]: JSON.parse(storedComments)
+        }));
+      } else {
+        setComments(prev => ({
+          ...prev,
+          [blogId]: []
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading comments for blog:', blogId, error);
+      setComments(prev => ({
+        ...prev,
+        [blogId]: []
+      }));
+    }
+  };
+
+  // Handle comment submission
+  const handleSubmitComment = async (blogId, e) => {
+    e.preventDefault();
+    
+    const commentText = newComments[blogId];
+    if (!commentText || !commentText.trim()) {
+      alert('Please enter a comment');
+      return;
+    }
+
+    try {
+      setSubmittingComments(prev => ({ ...prev, [blogId]: true }));
+      
+      // Create new comment object
+      const comment = {
+        id: Date.now(),
+        postId: blogId,
+        author: 'Anonymous User', // In a real app, get from user context
+        content: commentText.trim(),
+        timestamp: new Date().toISOString(),
+        likes: 0,
+        replies: []
+      };
+
+      // Add comment to state
+      const updatedComments = [comment, ...(comments[blogId] || [])];
+      setComments(prev => ({
+        ...prev,
+        [blogId]: updatedComments
+      }));
+
+      // Clear the input
+      setNewComments(prev => ({ ...prev, [blogId]: '' }));
+
+      // Save to localStorage (in real app, save to API)
+      localStorage.setItem(`comments_${blogId}`, JSON.stringify(updatedComments));
+      
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      alert('Failed to post comment. Please try again.');
+    } finally {
+      setSubmittingComments(prev => ({ ...prev, [blogId]: false }));
+    }
+  };
+
+  // Handle comment input change
+  const handleCommentChange = (blogId, value) => {
+    setNewComments(prev => ({ ...prev, [blogId]: value }));
+  };
+
   const fetchBlogs = async () => {
     try {
       setLoading(true);
@@ -94,7 +176,7 @@ const BlogPage = () => {
         id: blog.id,
         title: blog.title,
         excerpt: blog.description,
-        image: getRandomImage(), // Use random image since API doesn't provide images
+        image: blog.photo || getRandomImage(),
         category: getCategoryFromTags(blog.tags),
         date: blog.timestamp,
         author: blogService.getAuthorName(blog.author),
@@ -282,6 +364,60 @@ const BlogPage = () => {
                 />
               </div>
             </div>
+
+            {/* Featured Post Comments Section */}
+            <div className="featured-comments-section">
+              <h4 className="comments-title">Comments ({comments[filteredPosts[0].id]?.length || 0})</h4>
+              
+              {/* Add Comment Form */}
+              <form className="comment-form" onSubmit={(e) => handleSubmitComment(filteredPosts[0].id, e)}>
+                <div className="form-group">
+                  <textarea
+                    value={newComments[filteredPosts[0].id] || ''}
+                    onChange={(e) => handleCommentChange(filteredPosts[0].id, e.target.value)}
+                    placeholder="Share your thoughts on this article..."
+                    rows="3"
+                    required
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  className="submit-comment-btn"
+                  disabled={submittingComments[filteredPosts[0].id]}
+                >
+                  {submittingComments[filteredPosts[0].id] ? 'Posting...' : 'Post Comment'}
+                </button>
+              </form>
+
+              {/* Comments List */}
+              <div className="comments-list">
+                {comments[filteredPosts[0].id] && comments[filteredPosts[0].id].length > 0 ? (
+                  comments[filteredPosts[0].id].slice(0, 3).map(comment => (
+                    <div key={comment.id} className="comment">
+                      <div className="comment-header">
+                        <span className="comment-author">{comment.author}</span>
+                        <span className="comment-date">{formatDate(comment.timestamp)}</span>
+                      </div>
+                      <div className="comment-content">
+                        {comment.content}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-comments">
+                    <p>No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                )}
+                
+                {comments[filteredPosts[0].id] && comments[filteredPosts[0].id].length > 3 && (
+                  <div className="view-more-comments">
+                    <button className="view-more-btn">
+                      View all {comments[filteredPosts[0].id].length} comments
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -327,6 +463,60 @@ const BlogPage = () => {
                     initialIsLiked={post.isLiked}
                     size="medium"
                   />
+                </div>
+              </div>
+
+              {/* Comments Section */}
+              <div className="blog-comments-section">
+                <h4 className="comments-title">Comments ({comments[post.id]?.length || 0})</h4>
+                
+                {/* Add Comment Form */}
+                <form className="comment-form" onSubmit={(e) => handleSubmitComment(post.id, e)}>
+                  <div className="form-group">
+                    <textarea
+                      value={newComments[post.id] || ''}
+                      onChange={(e) => handleCommentChange(post.id, e.target.value)}
+                      placeholder="Share your thoughts on this article..."
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="submit-comment-btn"
+                    disabled={submittingComments[post.id]}
+                  >
+                    {submittingComments[post.id] ? 'Posting...' : 'Post Comment'}
+                  </button>
+                </form>
+
+                {/* Comments List */}
+                <div className="comments-list">
+                  {comments[post.id] && comments[post.id].length > 0 ? (
+                    comments[post.id].slice(0, 3).map(comment => (
+                      <div key={comment.id} className="comment">
+                        <div className="comment-header">
+                          <span className="comment-author">{comment.author}</span>
+                          <span className="comment-date">{formatDate(comment.timestamp)}</span>
+                        </div>
+                        <div className="comment-content">
+                          {comment.content}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-comments">
+                      <p>No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                  )}
+                  
+                  {comments[post.id] && comments[post.id].length > 3 && (
+                    <div className="view-more-comments">
+                      <button className="view-more-btn">
+                        View all {comments[post.id].length} comments
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </article>

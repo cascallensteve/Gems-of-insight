@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import LazyLoad from 'react-lazyload';
+import QuickViewModal from './QuickViewModal';
 import './Shop.css';
 
 const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
   const { addToCart } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const [cartNotification, setCartNotification] = useState({ show: false, productName: '' });
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [showQuickView, setShowQuickView] = useState(false);
 
   // Complete product catalog with 12 items
   const allProducts = [
@@ -905,6 +909,17 @@ const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
     }, 3000);
   };
 
+  const handleQuickView = (product) => {
+    console.log('Opening quick view for:', product.name);
+    setQuickViewProduct(product);
+    setShowQuickView(true);
+    console.log('Modal state:', { product: product.name, show: true });
+  };
+
+  const handleProductView = (product) => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
     <section className="shop-section">
       <div className="shop-container">
@@ -926,13 +941,22 @@ const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
                     <div className="product-actions">
                       <button 
                         className="action-btn quick-view"
-                        onClick={() => onQuickView && onQuickView(product)}
+                        onClick={() => handleQuickView(product)}
+                        title="Quick View"
                       >
                         👁️
                       </button>
                       <button 
+                        className="action-btn view-details"
+                        onClick={() => handleProductView(product)}
+                        title="View Details"
+                      >
+                        📋
+                      </button>
+                      <button 
                         className="action-btn add-to-cart"
                         onClick={() => handleAddToCart(product)}
+                        title="Add to Cart"
                       >
                         +
                       </button>
@@ -1079,13 +1103,13 @@ const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
                 <div className="product-overlay">
                   <button 
                     className="quick-view-btn"
-                    onClick={() => onQuickView && onQuickView(product)}
+                    onClick={() => handleQuickView(product)}
                   >
                     Quick View
                   </button>
                   <button 
                     className="full-view-btn"
-                    onClick={() => onProductView && onProductView(product)}
+                    onClick={() => handleProductView(product)}
                   >
                     Full Details
                   </button>
@@ -1137,6 +1161,21 @@ const Shop = ({ bestSellers, onQuickView, onProductView, onSearch }) => {
           </div>
         )}
       </div>
+      
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={showQuickView}
+        onClose={() => {
+          setShowQuickView(false);
+          setQuickViewProduct(null);
+        }}
+        onViewFullDetails={(product) => {
+          setShowQuickView(false);
+          setQuickViewProduct(null);
+          handleProductView(product);
+        }}
+      />
     </section>
   );
 };

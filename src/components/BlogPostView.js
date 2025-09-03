@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { blogService } from '../services/blogService';
 import LikeButton from './LikeButton';
 import LoadingDots from './LoadingDots';
@@ -8,6 +9,7 @@ import './BlogPostView.css';
 const BlogPostView = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +75,13 @@ const BlogPostView = () => {
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     
+    // Check if user is logged in
+    if (!currentUser) {
+      alert('Please login to comment on this blog post');
+      navigate('/login');
+      return;
+    }
+    
     if (!newComment.trim()) {
       alert('Please enter a comment');
       return;
@@ -81,11 +90,12 @@ const BlogPostView = () => {
     try {
       setSubmittingComment(true);
       
-      // Create new comment object
+      // Create new comment object with real user data
       const comment = {
         id: Date.now(),
         postId: postId,
-        author: 'Anonymous User', // In a real app, get from user context
+        author: currentUser.full_name || currentUser.username || currentUser.email || 'Unknown User',
+        authorId: currentUser.id,
         content: newComment.trim(),
         timestamp: new Date().toISOString(),
         likes: 0,
@@ -122,11 +132,19 @@ const BlogPostView = () => {
   };
 
   const handleReplyToComment = (commentId) => {
+    // Check if user is logged in
+    if (!currentUser) {
+      alert('Please login to reply to comments');
+      navigate('/login');
+      return;
+    }
+    
     const replyContent = prompt('Enter your reply:');
     if (replyContent && replyContent.trim()) {
       const reply = {
         id: Date.now(),
-        author: 'Anonymous User',
+        author: currentUser.full_name || currentUser.username || currentUser.email || 'Unknown User',
+        authorId: currentUser.id,
         content: replyContent.trim(),
         timestamp: new Date().toISOString(),
         likes: 0
@@ -268,26 +286,37 @@ const BlogPostView = () => {
           </h2>
 
           {/* Add Comment Form */}
-          <form className="comment-form" onSubmit={handleSubmitComment}>
-            <div className="form-group">
-              <label htmlFor="comment">Add a comment:</label>
-              <textarea
-                id="comment"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Share your thoughts on this article..."
-                rows="4"
-                required
-              />
+          {currentUser ? (
+            <form className="comment-form" onSubmit={handleSubmitComment}>
+              <div className="form-group">
+                <label htmlFor="comment">Add a comment:</label>
+                <textarea
+                  id="comment"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Share your thoughts on this article..."
+                  rows="4"
+                  required
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="submit-comment-btn"
+                disabled={submittingComment}
+              >
+                {submittingComment ? 'Posting...' : 'Post Comment'}
+              </button>
+            </form>
+          ) : (
+            <div className="login-to-comment">
+              <p>Please <button 
+                className="login-link-btn" 
+                onClick={() => navigate('/login')}
+              >
+                login
+              </button> to comment on this blog post.</p>
             </div>
-            <button 
-              type="submit" 
-              className="submit-comment-btn"
-              disabled={submittingComment}
-            >
-              {submittingComment ? 'Posting...' : 'Post Comment'}
-            </button>
-          </form>
+          )}
 
           {/* Comments List */}
           <div className="comments-list">
@@ -299,7 +328,12 @@ const BlogPostView = () => {
               comments.map(comment => (
                 <div key={comment.id} className="comment">
                   <div className="comment-header">
-                    <span className="comment-author">{comment.author}</span>
+                    <div className="comment-author-section">
+                      <div className="comment-avatar">
+                        {comment.author.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="comment-author">{comment.author}</span>
+                    </div>
                     <span className="comment-date">{formatDate(comment.timestamp)}</span>
                   </div>
                   <div className="comment-content">
@@ -326,7 +360,12 @@ const BlogPostView = () => {
                       {comment.replies.map(reply => (
                         <div key={reply.id} className="reply">
                           <div className="reply-header">
-                            <span className="reply-author">{reply.author}</span>
+                            <div className="reply-author-section">
+                              <div className="reply-avatar">
+                                {reply.author.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="reply-author">{reply.author}</span>
+                            </div>
                             <span className="reply-date">{formatDate(reply.timestamp)}</span>
                           </div>
                           <div className="reply-content">

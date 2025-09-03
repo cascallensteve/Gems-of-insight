@@ -29,12 +29,20 @@ const LogoutPage = () => {
       // Simulate logout process
       await new Promise(resolve => setTimeout(resolve, 1500));
       logout();
-      navigate('/');
+      // Navigate to home page and scroll to top
+      navigate('/', { replace: true });
+      // Force scroll to top after navigation
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       // Force logout even if there's an error
       logout();
-      navigate('/');
+      navigate('/', { replace: true });
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
     }
   };
 

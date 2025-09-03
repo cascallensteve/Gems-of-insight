@@ -8,6 +8,7 @@ import Sales from './Sales';
 import Analytics from './Analytics';
 import Products from './Products';
 import Orders from './Orders';
+import Courses from './Courses';
 import AdminBlogManager from '../AdminBlogManager';
 import AdminAppointments from './AdminAppointments';
 import AdminOrders from './AdminOrders';
@@ -51,6 +52,7 @@ const AdminLayout = () => {
     { id: 'sales', name: 'Sales', icon: '📈' },
     { id: 'analytics', name: 'Analytics', icon: '📊' },
     { id: 'products', name: 'Products', icon: '🛒' },
+    { id: 'courses', name: 'Courses', icon: '🎓' },
     { id: 'orders', name: 'Orders', icon: '📦' },
     { id: 'users', name: 'Users', icon: '👥' },
     { id: 'blog', name: 'Blog Manager', icon: '📝' },
@@ -69,6 +71,8 @@ const AdminLayout = () => {
         return <Analytics />;
       case 'products':
         return <AdminProducts />;
+      case 'courses':
+        return <Courses />;
       case 'orders':
         return <AdminOrders />;
       case 'users':
@@ -98,7 +102,6 @@ const AdminLayout = () => {
   const handleNotificationClick = () => {
     setActiveTab('notifications');
   };
-
   return (
     <div className="admin-layout admin-layout--with-sidebar">
       {/* Mobile Menu Overlay */}
@@ -129,6 +132,13 @@ const AdminLayout = () => {
       <div className="admin-main admin-main--with-sidebar">
         <div className="admin-top-header">
           <div className="admin-top-header__left">
+            <div className="admin-top-header__logo">
+              <img 
+                src="/images/Gems_of_insight_logo_ghxcbv (1).png" 
+                alt="Gems of Insight Logo" 
+                className="admin-top-logo"
+              />
+            </div>
             <h1 className="admin-top-header__title">
               {menuItems.find(item => item.id === activeTab)?.name || 'Dashboard'}
             </h1>
@@ -147,6 +157,13 @@ const AdminLayout = () => {
         <div className="admin-content">
           {renderContent()}
         </div>
+        <footer className="admin-footer">
+          <div className="admin-footer__content">
+            <span className="admin-footer__brand">Gems of Insight Admin</span>
+            <span className="admin-footer__sep">•</span>
+            <span className="admin-footer__copyright">© {new Date().getFullYear()} All rights reserved.</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

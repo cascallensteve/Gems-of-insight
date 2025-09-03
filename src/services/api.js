@@ -285,7 +285,7 @@ const apiService = {
     // Create order
     createOrder: async (orderData) => {
       try {
-        const response = await api.post('/orders/create', orderData);
+        const response = await api.post('/bookings/create-order', orderData);
         return response.data;
       } catch (error) {
         throw error.response?.data || error.message;
@@ -457,6 +457,142 @@ const apiService = {
         throw error.response?.data || error.message;
       }
     }
+  },
+
+  // Newsletter endpoints
+  newsletter: {
+    // Subscribe to newsletter
+    subscribe: async (email) => {
+      try {
+        console.log('API Service - Subscribing email:', email);
+        const response = await axios.post(`${api.defaults.baseURL}/newsletter/subscribe`, {
+          email
+        }, {
+          withCredentials: false,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('API Service - Subscription success:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('API Service - Subscription error:', error);
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Unsubscribe from newsletter
+    unsubscribe: async (email) => {
+      try {
+        const response = await axios.post(`${api.defaults.baseURL}/newsletter/unsubscribe`, {
+          email
+        }, {
+          withCredentials: false,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Send newsletter to all subscribers (admin only)
+    sendNewsletter: async (newsletterData) => {
+      try {
+        const response = await api.post('/newsletter/send-newsletter', {
+          subject: newsletterData.subject,
+          body: newsletterData.body
+        });
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Get all newsletter subscribers (admin only)
+    getAllSubscribers: async () => {
+      try {
+        const response = await api.get('/newsletter/subscribers');
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    }
+  },
+
+  // Course endpoints
+  courses: {
+    // List all courses (public)
+    listCourses: async () => {
+      try {
+        const response = await axios.get(`${api.defaults.baseURL}/courses/list-courses`, {
+          withCredentials: false,
+          headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // View single course (public)
+    getCourseDetail: async (courseId) => {
+      try {
+        const response = await axios.get(`${api.defaults.baseURL}/courses/view-course/${courseId}/`, {
+          withCredentials: false,
+          headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Add a new course (admin only)
+    addCourse: async (courseData) => {
+      try {
+        const response = await api.post('/courses/add-course', courseData);
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Edit a course (admin only)
+    editCourse: async (courseId, courseData) => {
+      try {
+        const response = await api.post(`/courses/edit-course/${courseId}/`, courseData);
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Enroll in a course (auth required)
+    enrollInCourse: async (courseId, enrollmentData = {}) => {
+      try {
+        const response = await api.post(`/courses/enroll-course/${courseId}/`, enrollmentData);
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+
+    // Delete a course (admin only)
+    deleteCourse: async (courseId) => {
+      try {
+        const response = await api.delete(`/courses/delete-course/${courseId}/`);
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+    // Note: Enrollment management endpoints are not implemented on backend yet
+    // getAllEnrollments: async () => { ... },
+    // getEnrollmentDetail: async (enrollmentId) => { ... },
+    // updateEnrollmentStatus: async (enrollmentId, status) => { ... }
   }
 };
 
@@ -515,6 +651,9 @@ export const initiateMpesaPayment = apiService.payments.initiateMpesaPayment;
 export const checkPaymentStatus = apiService.payments.checkPaymentStatus;
 export const forgotPassword = apiService.auth.forgotPassword;
 export const resetPassword = apiService.auth.resetPassword;
+export const sendNewsletter = apiService.newsletter.sendNewsletter;
+export const subscribeNewsletter = apiService.newsletter.subscribe;
+export const unsubscribeNewsletter = apiService.newsletter.unsubscribe;
 
 export default apiService;
 export { api };
